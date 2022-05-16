@@ -11,9 +11,17 @@ app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 
 const upload=multer({dest:'uploads/'})
-var user=require('./routers/approutes')
-app.use('/',user);
+//var user=require('./routers/approutes')
 
+var user_details=require('./routers/login')
+
+var profile=require('./routers/profile')
+
+var post=require('./routers/post')
+//app.use('/',user);
+app.use('/',user_details)
+app.use('/',profile)
+app.use('/',post)
 app.get('/name',(req,res)=>{
     res.send('suriya')
 })
