@@ -2,22 +2,27 @@ var router=require("express").Router()
 var user_details=require('../model/user_db')
 var mongo=require('../config/db')
 var image=require('../model/post')
-
+var don=null
 var saltRounds = 10; 
 //router.post('/login',login_validate);
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
 
+var auth=require("../middleware/auth")
+
 router.post("/login",  (req, res) => {
     var newUser = {};
-    newUser.name = req.body.name;
+    newUser.name = req.body.email;
     newUser.password = req.body.password;
     
-     user_details.findOne({ name: newUser.name })
+     user_details.findOne({ email: newUser.name })
       .then(profile => {
+        //console.log(profile.email)
         if (!profile) {
           res.send("User not exist");
         } else {
+          var don=profile.email
+          console.log(don,123456)
           bcrypt.compare(
             newUser.password,
             profile.password,
@@ -27,6 +32,8 @@ router.post("/login",  (req, res) => {
               } else if (result == true) {
                 const user={id:user_details._id}
                 const token=jwt.sign({user},'my_secret_key')
+                //console.log(user.id)
+                req.session.auth=true
                 res.json({
                   token:token,
                 data:profile});
@@ -106,4 +113,16 @@ router.post("/signup",  (req, res) => {
         console.log("Error is", err.message);
       });
   });
+  router.get('/logout',(req,res)=>{
+    req.session.destroy((err)=>{
+      if (err) throw err
+      else{
+        res.json({
+          message:'logout successfully'
+        })
+      }
+    })
+  })
 module.exports=router
+module.exports.don=don;
+//module.exports=user

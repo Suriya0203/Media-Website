@@ -6,6 +6,7 @@ var image=require('../model/post')
 //const { mutateExecOptions } = require('nodemon/lib/config/load')
 //mongo();
 const multer=require('multer')
+var auth=require("../middleware/auth")
 let name='1234'
 const Storage=multer.diskStorage({
     destination: "uploads",
@@ -17,8 +18,9 @@ const Storage=multer.diskStorage({
 const upload=multer({
     storage:Storage
 }).single('image')
-router.post('/createpost',(req,res)=>{
-    upload(req,res,(err)=>{
+router.post('/createpost',auth,(req,res)=>{
+  console.log(req.user)  
+  upload(req,res,(err)=>{
         if (err){
             console.log(err)
         }
@@ -26,7 +28,7 @@ router.post('/createpost',(req,res)=>{
             const newImage=new image({
                 name:req.body.name,
                 image:{
-                    data:req.file.fileame,
+                    data:req.filename,
                     contentType:'image/png'
                 },
                 createdBy:req.body.createrid
@@ -38,7 +40,7 @@ router.post('/createpost',(req,res)=>{
         }
     })
 })
-router.get('/getpost/:id',(req,res)=>{
+router.get('/getpost/:id',auth,(req,res)=>{
     id=req.params.id
     image.findById(id,(err,data)=>{
         if(!err){
@@ -49,7 +51,7 @@ router.get('/getpost/:id',(req,res)=>{
         }
     })
 })
-router.post('/addcomment', (req,res)=>{
+router.post('/addcomment', auth,(req,res)=>{
     console.log(req.body.id)
     //console.log(req.user_details.id)
     const post =  image.findByIdAndUpdate(
@@ -70,7 +72,7 @@ router.post('/addcomment', (req,res)=>{
     })
   })
 })
-router.delete('/deletepost/:id',(req,res)=>{
+router.delete('/deletepost/:id',auth,(req,res)=>{
   image.deleteOne( { _id: req.params.id } )
   .then(result=>{
     res.json({
@@ -86,7 +88,7 @@ router.delete('/deletepost/:id',(req,res)=>{
 
 
 
-router.put('/addlike',(req,res)=>{
+router.put('/addlike',auth,(req,res)=>{
     console.log(req.body.id)
     //console.log(req.user_details.id)
     const post =  image.findByIdAndUpdate(
@@ -107,7 +109,7 @@ router.put('/addlike',(req,res)=>{
       })
     })      
   })
-  router.delete('/deletecomment/:id',(req,res)=>{
+  router.delete('/deletecomment/:id',auth,(req,res)=>{
     console.log(req.params.id)
     image.deleteOne( {comments:{ _id: req.params.id }} )
     .then(result=>{
@@ -122,7 +124,7 @@ router.put('/addlike',(req,res)=>{
     })
     
   })
-  router.put('/updatecomment',(req,res)=>{
+  router.put('/updatecomment',auth,(req,res)=>{
     const update=image.findOneAndUpdate(req.body.id,
       {
               $push: { comments: { comment: req.body.comment,commentedBy: req.body.commentByid} },//commentedBy: req.user_details.id
