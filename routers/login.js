@@ -37,6 +37,8 @@ router.post("/login",  (req, res) => {
                 const token=jwt.sign({user},'my_secret_key')
                 //console.log(user.id)
                 req.session.auth=true
+                req.session.userId=profile.id
+                console.log(req.session.userId)
                 res.json({
                   token:token,
                 data:profile});
@@ -128,7 +130,7 @@ router.post("/signup",  (req, res) => {
   })
   router.put('/editprofile',(req,res)=>{
     //console.log(req.body)
-    const profile_data=user_details.findByIdAndUpdate(req.body.id,
+    const profile_data=user_details.findByIdAndUpdate(req.session.userId,
     {
       $push:{name:req.body.name}
     })

@@ -33,11 +33,11 @@ router.get('/profile/:id',auth,(req,res)=>{
 
 router.put('/addfriend',auth,async(req,res)=>{
     //console.log(User.)
-    user_id=req.body.user_id
+    //user_id=req.body.user_id
     friend_id=req.body.friend_id
-    console.log(user_id)
+    //console.log(user_id)
     console.log(friend_id)
-    const friend=await user_details.findByIdAndUpdate(user_id,{
+    const friend=await user_details.findByIdAndUpdate(req.session.userId,{
       
       $push:{friends:{friendid:friend_id}}
       
@@ -64,5 +64,22 @@ router.put('/addfriend',auth,async(req,res)=>{
       }
     })
   })
-
+router.get('/profile',auth,(req,res)=>{
+  user_details.findById(req.session.userId,(err,data)=>{
+    if(!err){
+        res.json({
+          //data:data,
+          name:data.name,
+          email:data.email,
+          gender:data.gender,
+          phone:data.phone,
+          friends:data.friends,
+          user:req.user
+        })
+    }
+    else{
+        console.log(err)
+    }
+})
+})
 module.exports = router; 

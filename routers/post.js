@@ -20,7 +20,7 @@ const upload=multer({
     storage:Storage
 }).single('image')
 router.post('/createpost',auth,(req,res)=>{
-  console.log(req.user)  
+  //console.log(req.user)  
   upload(req,res,(err)=>{
         if (err){
             console.log(err)
@@ -32,7 +32,7 @@ router.post('/createpost',auth,(req,res)=>{
                     data:req.filename,
                     contentType:'image/png'
                 },
-                createdBy:req.body.createrid
+                createdBy:req.session.userId//req.body.createrid
                 //user:getUser()
             })
             newImage.save().then(()=>{
@@ -62,7 +62,7 @@ router.post('/addcomment', auth,(req,res)=>{
     const post =  image.findByIdAndUpdate(
 		req.body.id,
 		{
-			$push: { comments: { comment: req.body.comment,commentedBy: req.body.commentByid} },//commentedBy: req.user_details.id
+			$push: { comments: { comment: req.body.comment,commentedBy: req.session.userId}},//req.body.commentByid} },//commentedBy: req.user_details.id
 		},
 
 	)
@@ -79,7 +79,7 @@ router.post('/addcomment', auth,(req,res)=>{
   })
 })
 router.delete('/deletepost/:id',auth,(req,res)=>{
-  image.findOne(req.userId).then(result=>{
+  image.findOne(req.params.id).then(result=>{
     if(result){
       res.json({
         message:"post is not exist"
@@ -87,7 +87,7 @@ router.delete('/deletepost/:id',auth,(req,res)=>{
     }
     else{
       console.log(req.userId)
-      image.deleteOne( { _id: Mongoose.Types.ObjectId(req.params.id ),createdBy:req.body.creatorid} )
+      image.deleteOne( { _id: Mongoose.Types.ObjectId(req.params.id ),createdBy:req.session.userId} )
       .then(result=>{
         res.json({
           message:'successfully deleted'
@@ -125,7 +125,7 @@ router.put('/addlike',auth,(req,res)=>{
       const post =  image.findByIdAndUpdate(
       req.body.id,
       {
-        $push: { likes: {like:'liked',likedby:req.body.likeByid}},//commentedBy: req.user_details.id
+        $push: { likes: {like:'liked',likedby:req.session.userId}}//req.body.likeByid}},//commentedBy: req.user_details.id
       },
     
     )
@@ -148,6 +148,8 @@ router.put('/addlike',auth,(req,res)=>{
      
   })
   router.delete('/deletecomment/:id',auth,(req,res)=>{
+    const{userId}=req.session
+    console.log(req.session.userId)
     console.log(req.params.id)
     image.deleteOne( {comments:{ _id: Mongoose.Types.ObjectId(req.params.id), }} )
     .then(result=>{
@@ -166,8 +168,8 @@ router.put('/addlike',auth,(req,res)=>{
   router.put('/updatecomment',auth,(req,res)=>{
     const update=image.findOneAndUpdate(req.body.id,
       {
-              $push: { comments: { comment: req.body.comment,commentedBy: req.body.commentByid} },//commentedBy: req.user_details.id
-          },)
+              $push: { comments: { comment: req.body.comment,commentedBy: req.session.userId}},//req.body.commentByid} },//commentedBy: req.user_details.id
+      })
       .then(result=>{
         res.json({
           message:'comment updated successfully',
