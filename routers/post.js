@@ -80,19 +80,26 @@ router.post('/addcomment', auth,(req,res)=>{
   })
 })
 router.delete('/deletepost/:id',auth,(req,res)=>{
-
       image.deleteOne( { _id: Mongoose.Types.ObjectId(req.params.id ),createdBy:req.session.userId} )
       .then(result=>{
+        //console.log(result.deletedCount)
+        if(result.deletedCount){
         res.json({
-          message:'successfully deleted'
-        })
+          message:'successfully deleted',
+          result:result
+        })}
+        else{
+          res.json({
+            message:"Post is not excist"
+          })
+        }
       })
       .catch(err=>{
         res.json({
           error:err
         })
       })
-    }
+}
 
   )
 
@@ -102,7 +109,12 @@ router.put('/addlike',auth,async(req,res)=>{
     // console.log(req.body.id)
     let posts = await image.findById(req.body.id);
     console.log(posts)
-    if (!posts) throw new NotFoundError(`No post with id${req.body.id}`);
+    if (!posts){
+      res.json({
+        message:`No post with id${req.body.id}`
+      })
+    }
+    // throw new NotFoundError(`No post with id${req.body.id}`);
     console.log(posts.likes)
     if ( posts.likes.includes(req.session.userId.toString())){
       res.json({
@@ -123,7 +135,7 @@ router.put('/addlike',auth,async(req,res)=>{
 })
 
   router.delete('/deletecomment/:id',auth,(req,res)=>{
-    const{userId}=req.session
+    //const{userId}=req.session
     console.log(req.session.userId,'suriya')
 
     image.updateOne(
@@ -147,23 +159,56 @@ router.put('/addlike',auth,async(req,res)=>{
     
   })
   router.put('/updatecomment',auth,(req,res)=>{
-    const update=image.findOneAndUpdate(req.body.id,
-      {
-              $push: { comments: { comment: req.body.comment,commentedBy: req.session.userId}},//req.body.commentByid} },//commentedBy: req.user_details.id
-      })
-      .then(result=>{
-        res.json({
-          message:'comment updated successfully',
-          result:result
-        })
-      })
-      .catch(err=>{
-        res.json({
-          error:err
-        })
-      })
-      //res.send('comment updated successfully')
+    // const update=image.findOneAndUpdate(req.body.id,
+    //   {
+    //           $push: { comments: { comment: req.body.comment,commentedBy: req.session.userId}},//req.body.commentByid} },//commentedBy: req.user_details.id
+    //   })
+    //   .then(result=>{
+    //     res.json({
+    //       message:'comment updated successfully',
+    //       result:result
+    //     })
+    //   })
+    //   .catch(err=>{
+    //     res.json({
+    //       error:err
+    //     })
+    //   })
+    //   //res.send('comment updated successfully')
+    // image.updateMany(req.body.id,{
+
+    // })
+    image.findById(req.body.id).then(result=>{
+      res.json(result)
+    })
   })
-  
+  router.delete('/removelike',async(req,res)=>{
+    let posts = await image.findById(req.body.id);
+    console.log(posts)
+    if (!posts){
+      res.json({
+        message:`No post with id${req.body.id}`
+      })
+    }
+    // throw new NotFoundError(`No post with id${req.body.id}`);
+    console.log(posts.likes)
+    if ( posts.likes.includes(req.session.userId.toString())){
+      posts = await image.findByIdAndUpdate(
+        req.body.id,
+        {
+          $pull: { likes: req.session.userId },
+        },
+        { new: true, runValidators: true }
+      );
+      res.status(StatusCodes.OK).json({
+        message:"Like removed successfully",
+        post: posts });
+    } 
+    else{
+      res.json({
+        message:"you'r not liked this post"
+      })}
+
+  })
   module.exports = router;        
   
