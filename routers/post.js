@@ -5,6 +5,7 @@ var image=require('../model/post')
 //const multer = require('multer')
 //const { mutateExecOptions } = require('nodemon/lib/config/load')
 //mongo();
+var Mongoose=require("mongoose")
 const multer=require('multer')
 var auth=require("../middleware/auth")
 let name='1234'
@@ -42,9 +43,13 @@ router.post('/createpost',auth,(req,res)=>{
 })
 router.get('/getpost/:id',auth,(req,res)=>{
     id=req.params.id
+    //console.log(req.auth.email)
     image.findById(id,(err,data)=>{
         if(!err){
-            res.send(data)
+            //res.send(data)
+            res.json({
+              data:data
+            })
         }
         else{
             console.log(err)
@@ -52,7 +57,7 @@ router.get('/getpost/:id',auth,(req,res)=>{
     })
 })
 router.post('/addcomment', auth,(req,res)=>{
-    console.log(req.body.id)
+    //console.log(req.profile)
     //console.log(req.user_details.id)
     const post =  image.findByIdAndUpdate(
 		req.body.id,
@@ -63,7 +68,8 @@ router.post('/addcomment', auth,(req,res)=>{
 	)
   .then(result=>{
     res.json({
-      message:'comment added successfully'
+      message:'comment added successfully',
+      result:result
     })
   })
   .catch(err=>{
@@ -73,17 +79,32 @@ router.post('/addcomment', auth,(req,res)=>{
   })
 })
 router.delete('/deletepost/:id',auth,(req,res)=>{
-  image.deleteOne( { _id: req.params.id } )
-  .then(result=>{
-    res.json({
-      message:'successfully deleted'
-    })
-  })
-  .catch(err=>{
+  image.findOne(req.userId).then(result=>{
+    if(result){
+      res.json({
+        message:"post is not exist"
+      })
+    }
+    else{
+      console.log(req.userId)
+      image.deleteOne( { _id: Mongoose.Types.ObjectId(req.params.id ),createdBy:req.body.creatorid} )
+      .then(result=>{
+        res.json({
+          message:'successfully deleted'
+        })
+      })
+      .catch(err=>{
+        res.json({
+          error:err
+        })
+      })
+    }
+  }).catch(err=>{
     res.json({
       error:err
     })
   })
+
 })
 
 
@@ -91,30 +112,48 @@ router.delete('/deletepost/:id',auth,(req,res)=>{
 router.put('/addlike',auth,(req,res)=>{
     console.log(req.body.id)
     //console.log(req.user_details.id)
-    const post =  image.findByIdAndUpdate(
-    req.body.id,
-    {
-      $push: { likes: {like:'liked',likedby:req.body.likeByid}},//commentedBy: req.user_details.id
-    },
-  
-  )
-    .then(result=>{
-      res.json({
-        message:'like added successfully '
+    const data=image.findById(req.body.id).then(result=>{
+      console.log(result)
+      if(result.likes.length>=1){
+        res.json({
+          message:"you'r already liked",
+          result:result.likes
+        })
+      }
+      else{
+          
+      const post =  image.findByIdAndUpdate(
+      req.body.id,
+      {
+        $push: { likes: {like:'liked',likedby:req.body.likeByid}},//commentedBy: req.user_details.id
+      },
+    
+    )
+      .then(result=>{
+        res.json({
+          message:'like added successfully '
+        })
       })
-    })
-    .catch(err=>{
+      .catch(err=>{
+        res.json({
+          error:err
+        })
+      }) 
+      }
+    }).catch(err=>{
       res.json({
         error:err
       })
-    })      
+    })
+     
   })
   router.delete('/deletecomment/:id',auth,(req,res)=>{
     console.log(req.params.id)
-    image.deleteOne( {comments:{ _id: req.params.id }} )
+    image.deleteOne( {comments:{ _id: Mongoose.Types.ObjectId(req.params.id), }} )
     .then(result=>{
       res.json({
-        message:'successfully deleted'
+        message:'successfully deleted',
+        result:result
       })
     })
     .catch(err=>{
@@ -131,7 +170,8 @@ router.put('/addlike',auth,(req,res)=>{
           },)
       .then(result=>{
         res.json({
-          message:'comment updated successfully'
+          message:'comment updated successfully',
+          result:result
         })
       })
       .catch(err=>{

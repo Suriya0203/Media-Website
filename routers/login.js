@@ -29,6 +29,9 @@ router.post("/login",  (req, res) => {
              (err, result) => {
               if (err) {
                 console.log("Error is", err.message);
+                res.json({
+                  message:"password incorrect"
+                })
               } else if (result == true) {
                 const user={id:user_details._id}
                 const token=jwt.sign({user},'my_secret_key')
@@ -121,6 +124,22 @@ router.post("/signup",  (req, res) => {
           message:'logout successfully'
         })
       }
+    })
+  })
+  router.put('/editprofile',(req,res)=>{
+    //console.log(req.body)
+    const profile_data=user_details.findByIdAndUpdate(req.body.id,
+    {
+      $push:{name:req.body.name}
+    })
+    .then(result=>{
+      res.json({
+        result:result
+      })
+    }).catch(err=>{
+      res.json({
+        error:err}
+      )
     })
   })
 module.exports=router

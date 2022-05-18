@@ -9,11 +9,18 @@ var User=require('./login')
 router.get('/profile/:id',auth,(req,res)=>{
     id=req.params.id
     console.log(User.don)
+    //const {ide}=req.user
+    //console.log(ide)
     console.log(req.user_details)
     user_details.findById(id,(err,data)=>{
         if(!err){
             res.json({
-              data:data,
+              //data:data,
+              name:data.name,
+              email:data.email,
+              gender:data.gender,
+              phone:data.phone,
+              friends:data.friends,
               user:req.user
             })
         }
