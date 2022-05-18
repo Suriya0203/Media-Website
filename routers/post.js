@@ -2,6 +2,7 @@ var router=require("express").Router()
 var user_details=require('../model/user_db')
 var mongo=require('../config/db')
 var image=require('../model/post')
+const { StatusCodes } = require('http-status-codes');
 //const multer = require('multer')
 //const { mutateExecOptions } = require('nodemon/lib/config/load')
 //mongo();
@@ -79,14 +80,7 @@ router.post('/addcomment', auth,(req,res)=>{
   })
 })
 router.delete('/deletepost/:id',auth,(req,res)=>{
-  image.findOne(req.params.id).then(result=>{
-    if(result){
-      res.json({
-        message:"post is not exist"
-      })
-    }
-    else{
-      console.log(req.userId)
+
       image.deleteOne( { _id: Mongoose.Types.ObjectId(req.params.id ),createdBy:req.session.userId} )
       .then(result=>{
         res.json({
@@ -99,60 +93,47 @@ router.delete('/deletepost/:id',auth,(req,res)=>{
         })
       })
     }
-  }).catch(err=>{
-    res.json({
-      error:err
-    })
-  })
 
-})
+  )
 
 
 
-router.put('/addlike',auth,(req,res)=>{
-    console.log(req.body.id)
-    //console.log(req.user_details.id)
-    const data=image.findById(req.body.id).then(result=>{
-      console.log(result)
-      if(result.likes.length>=1){
-        res.json({
-          message:"you'r already liked",
-          result:result.likes
-        })
-      }
-      else{
-          
-      const post =  image.findByIdAndUpdate(
+router.put('/addlike',auth,async(req,res)=>{
+    // console.log(req.body.id)
+    let posts = await image.findById(req.body.id);
+    console.log(posts)
+    if (!posts) throw new NotFoundError(`No post with id${req.body.id}`);
+    console.log(posts.likes)
+    if ( posts.likes.includes(req.session.userId.toString())){
+      res.json({
+        message:"you'r already liked"
+      })
+    }
+    else{
+  
+    posts = await image.findByIdAndUpdate(
       req.body.id,
       {
-        $push: { likes: {like:'liked',likedby:req.session.userId}}//req.body.likeByid}},//commentedBy: req.user_details.id
+        $push: { likes: req.session.userId },
       },
-    
-    )
-      .then(result=>{
-        res.json({
-          message:'like added successfully '
-        })
-      })
-      .catch(err=>{
-        res.json({
-          error:err
-        })
-      }) 
-      }
-    }).catch(err=>{
-      res.json({
-        error:err
-      })
-    })
-     
-  })
+      { new: true, runValidators: true }
+    );
+    res.status(StatusCodes.OK).json({ posts });
+  }
+})
+
   router.delete('/deletecomment/:id',auth,(req,res)=>{
     const{userId}=req.session
-    console.log(req.session.userId)
-    console.log(req.params.id)
-    image.deleteOne( {comments:{ _id: Mongoose.Types.ObjectId(req.params.id), }} )
+    console.log(req.session.userId,'suriya')
+
+    image.updateOne(
+      { _id: Mongoose.Types.ObjectId(req.params.id) },
+      {
+        $pull: { comments: { commentedBy: req.session.userId } }
+      }
+    )
     .then(result=>{
+      console.log(result)
       res.json({
         message:'successfully deleted',
         result:result

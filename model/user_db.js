@@ -22,17 +22,9 @@ const user_deatils=mongoose.model('user_details',{
 		type:String,
 		required:true
 	},
-	friends:[{
-		friendid:{
-			type:String,
-			required:true
-		},
-		friendat: {
-			type: Date,
-			default: new Date(),
-			required: true,
-		 },
-	}]
+	friends:{
+		type:[String]
+	}
 
 })
 module.exports=user_deatils

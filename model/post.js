@@ -34,20 +34,12 @@ const post=mongoose.model('post',{
            },
         },
      ],
-    likes:[{
-        like:{
-            type:String
-            },
-        likedby:{
-            type: mongoose.Types.ObjectId,
-            ref: "user_details",
-        }
-        
-        
-        
-    }],
+    likes:{
+        type:[String]
+    },
 
     user: { type: mongoose.Schema.ObjectId, ref: 'User_details' }
 
 })
+//post.collection.createIndex( { likedby: 1 }, { unique: true } )
 module.exports=post
