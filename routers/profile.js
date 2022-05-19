@@ -98,7 +98,7 @@ router.get('/profile',auth,(req,res)=>{
     }
 })
 })
-router.delete('/removefriend',async(req,res)=>{
+router.delete('/removefriend',auth,async(req,res)=>{
   friend_id=req.body.friend_id.toString()
   let posts = await user_details.findById(req.session.userId);
   console.log(friend_id)

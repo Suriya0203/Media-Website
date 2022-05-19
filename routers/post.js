@@ -10,7 +10,7 @@ const { StatusCodes } = require('http-status-codes');
 var Mongoose=require("mongoose")
 const multer=require('multer')
 var auth=require("../middleware/auth");
-const comment = require("../model/comments");
+//const comment = require("../model/comments");
 let name='1234'
 const Storage=multer.diskStorage({
     destination: "uploads",
@@ -39,7 +39,9 @@ router.post('/createpost',auth,(req,res)=>{
                 //user:getUser()
             })
             newImage.save().then(()=>{
-                res.send('successfully added')
+                res.json({
+                  message:"post created successfully"
+                })
             }).catch(err=>console.log(err))
         }
     })
@@ -58,28 +60,6 @@ router.get('/getpost/:id',auth,(req,res)=>{
             console.log(err)
         }
     })
-})
-router.post('/addcomment', auth,(req,res)=>{
-    //console.log(req.profile)
-    //console.log(req.user_details.id)
-    const post =  image.findByIdAndUpdate(
-		req.body.id,
-		{
-			$push: { comments: { comment: req.body.comment,commentedBy: req.session.userId}},//req.body.commentByid} },//commentedBy: req.user_details.id
-		},
-
-	)
-  .then(result=>{
-    res.json({
-      message:'comment added successfully',
-      result:result
-    })
-  })
-  .catch(err=>{
-    res.json({
-      error:err
-    })
-  })
 })
 router.delete('/deletepost/:id',auth,(req,res)=>{
       image.deleteOne( { _id: Mongoose.Types.ObjectId(req.params.id ),createdBy:req.session.userId} )
@@ -135,54 +115,7 @@ router.put('/addlike',auth,async(req,res)=>{
     res.status(StatusCodes.OK).json({ posts });
   }
 })
-
-  router.delete('/deletecomment/:id',auth,(req,res)=>{
-    //const{userId}=req.session
-    console.log(req.session.userId,'suriya')
-
-    image.updateOne(
-      { _id: Mongoose.Types.ObjectId(req.params.id) },
-      {
-        $pull: { comments: { commentedBy: req.session.userId } }
-      }
-    )
-    .then(result=>{
-      console.log(result)
-      res.json({
-        message:'successfully deleted',
-        result:result
-      })
-    })
-    .catch(err=>{
-      res.json({
-        error:err
-      })
-    })
-    
-  })
-  router.put('/updatecomment',auth,async(req,res)=>{
-    
-    image.updateOne(
-      { _id: Mongoose.Types.ObjectId(req.body.id) },
-      {
-        $set: { comments: { commentedBy: req.session.userId,comment:req.body.comment } }
-      }
-  ).then(result=>{
-    res.send(result)
-  }).catch(err=>{
-    res.send(err)
-  })
-})
-
-    //   let post=await image.findById(req.body.id)
-  //   //console.log(post)
-  //     res.send(post.comments)
-  //     for(commentedBy in post.comments){
-  //         console.log(134567)
-  //         console.log(post.comments._id)
-  //     }
-  // })
-  router.delete('/removelike',async(req,res)=>{
+  router.delete('/removelike',auth,async(req,res)=>{
     let posts = await image.findById(req.body.id);
     console.log(posts)
     if (!posts){
@@ -210,7 +143,7 @@ router.put('/addlike',auth,async(req,res)=>{
       })}
 
   })
-  router.post('/addcomment2', auth,async(req,res)=>{
+  router.post('/addcomment', auth,async(req,res)=>{
     var post=await image.findById(req.body.postId)
     console.log(post)
     if (post=="null"){
@@ -235,7 +168,7 @@ router.put('/addlike',auth,async(req,res)=>{
       })
     })}
 })
-router.get('/viewpost',async(req,res)=>{
+router.get('/viewpost',auth,async(req,res)=>{
   await image.find({createdBy:req.session.userId}).then(
     result=>{
       res.send(result)
@@ -246,6 +179,64 @@ router.get('/viewpost',async(req,res)=>{
     }
   )
 
+})
+router.delete('/deletecomment',auth,async(req,res)=>{
+  var post=await comments_data.findById({_id:req.body.id})
+  console.log(post)
+  if(post!="null"){
+    //res.send(post.commentedBy)
+    if(post.commentedBy.toString()==req.session.userId.toString()){
+        var del=await comments_data.findByIdAndDelete({_id:req.body.id}).then(
+          result=>{
+            res.json({
+              message:"comment deleted successfully"
+            }).catch(err=>{
+              res.send(err)
+            })
+          }
+        )
+    }
+    else{
+      res.json({
+        message:"you'r not comment this post"
+      })
+    }
+  }
+  else{
+    res.json({
+      message:"Your not comment this post"
+    })
+  }
+})
+router.put('/editcomment',auth,async(req,res)=>{
+  var post=await comments_data.findById({_id:req.body.id})
+  console.log(post)
+  if(post!="null"){
+    //res.send(post.commentedBy)
+    if(post.commentedBy.toString()==req.session.userId.toString()){
+        var del=await comments_data.findByIdAndUpdate({_id:req.body.id},{
+          $set:{comment:req.body.comment}
+        }).then(
+          result=>{
+            res.json({
+              message:"comment edited successfully"
+            }).catch(err=>{
+              res.send(err)
+            })
+          }
+        )
+    }
+    else{
+      res.json({
+        message:"you'r not comment this post"
+      })
+    }
+  }
+  else{
+    res.json({
+      message:"Your not comment this post"
+    })
+  }
 })
 
 module.exports = router;        
