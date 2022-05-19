@@ -2,13 +2,15 @@ var router=require("express").Router()
 var user_details=require('../model/user_db')
 var mongo=require('../config/db')
 var image=require('../model/post')
+const comments_data=require('../model/comments')
 const { StatusCodes } = require('http-status-codes');
 //const multer = require('multer')
 //const { mutateExecOptions } = require('nodemon/lib/config/load')
 //mongo();
 var Mongoose=require("mongoose")
 const multer=require('multer')
-var auth=require("../middleware/auth")
+var auth=require("../middleware/auth");
+const comment = require("../model/comments");
 let name='1234'
 const Storage=multer.diskStorage({
     destination: "uploads",
@@ -158,30 +160,28 @@ router.put('/addlike',auth,async(req,res)=>{
     })
     
   })
-  router.put('/updatecomment',auth,(req,res)=>{
-    // const update=image.findOneAndUpdate(req.body.id,
-    //   {
-    //           $push: { comments: { comment: req.body.comment,commentedBy: req.session.userId}},//req.body.commentByid} },//commentedBy: req.user_details.id
-    //   })
-    //   .then(result=>{
-    //     res.json({
-    //       message:'comment updated successfully',
-    //       result:result
-    //     })
-    //   })
-    //   .catch(err=>{
-    //     res.json({
-    //       error:err
-    //     })
-    //   })
-    //   //res.send('comment updated successfully')
-    // image.updateMany(req.body.id,{
-
-    // })
-    image.findById(req.body.id).then(result=>{
-      res.json(result)
-    })
+  router.put('/updatecomment',auth,async(req,res)=>{
+    
+    image.updateOne(
+      { _id: Mongoose.Types.ObjectId(req.body.id) },
+      {
+        $set: { comments: { commentedBy: req.session.userId,comment:req.body.comment } }
+      }
+  ).then(result=>{
+    res.send(result)
+  }).catch(err=>{
+    res.send(err)
   })
+})
+
+    //   let post=await image.findById(req.body.id)
+  //   //console.log(post)
+  //     res.send(post.comments)
+  //     for(commentedBy in post.comments){
+  //         console.log(134567)
+  //         console.log(post.comments._id)
+  //     }
+  // })
   router.delete('/removelike',async(req,res)=>{
     let posts = await image.findById(req.body.id);
     console.log(posts)
@@ -210,5 +210,43 @@ router.put('/addlike',auth,async(req,res)=>{
       })}
 
   })
-  module.exports = router;        
+  router.post('/addcomment2', auth,async(req,res)=>{
+    var post=await image.findById(req.body.postId)
+    console.log(post)
+    if (post=="null"){
+      res.json({
+        messsage:"NO post in this id"
+      })
+    }
+    else{
+    var newComment = new comments_data({
+      comment: req.body.comment,
+      commentedBy: req.session.userId,
+      postId:req.body.postid
+    })
+    newComment.save().then(result=>{
+      res.json({
+        message:"comment added successfully",
+        result:result
+      })
+    }).catch(err=>{
+      res.json({
+        error:err
+      })
+    })}
+})
+router.get('/viewpost',async(req,res)=>{
+  await image.find({createdBy:req.session.userId}).then(
+    result=>{
+      res.send(result)
+    }
+  ).catch(
+    err=>{
+        res.send(err)
+    }
+  )
+
+})
+
+module.exports = router;        
   
