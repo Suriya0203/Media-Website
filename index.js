@@ -13,13 +13,14 @@ app.use(express.static(path.join(__dirname,'public')))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
+require('dotenv').config();
 const store = new MongoDBStore({
-    uri: "mongodb+srv://Suriya:%24uriyA%402003@cluster0.g1bqx.mongodb.net/media?retryWrites=true&w=majority",
+    uri: process.env.DB,
     collection: "mySessions",
   });
 app.use(
     session({
-      secret: "secret",
+      secret: process.env.SECRET,
       resave: false,
       saveUninitialized: false,
       store: store,
@@ -51,6 +52,6 @@ app.get('/name',auth,(req,res)=>{
 // Load Config
 //dotenv.config({path: './config/config.env'})
 
-app.listen('2000',()=>{
+app.listen(process.env.PORT,()=>{
     console.log('server listening')
 })
