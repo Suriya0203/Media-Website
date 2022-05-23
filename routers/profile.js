@@ -134,5 +134,17 @@ router.delete('/removefriend',auth,async(req,res)=>{
       message:"He's not your friend"
     })}
 })
+router.put('/editprofile',async(req,res)=>{
+  console.log(req.body.name)
+  await user_details.findByIdAndUpdate(req.session.userId,
+    {
+      $set:{name:req.body.name}
+    }
 
+  ).then(result=>
+    res.json({
+      message:"profile updated successfully"}
+    )
+  )
+})
 module.exports = router; 

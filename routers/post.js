@@ -238,6 +238,40 @@ router.put('/editcomment',auth,async(req,res)=>{
     })
   }
 })
+router.put('/editpost',auth,async(req,res)=>{
+  console.log(req.body.id)
+  var post=await image.findById({_id:req.body.id})
+  console.log(post)
+  if(post!="null"){
+    //res.send(post.commentedBy)
+    if(post.createdBy.toString()==req.session.userId.toString()){
+        var del=await image.findByIdAndUpdate({_id:req.body.id},{
+          $set:{name:req.body.name}
+        }).then(
+          result=>{
+            res.json({
+              message:"post edited successfully"
+            }).catch(err=>{
+              res.send(err)
+            })
+          }
+        )
+    }
+    else{
+      res.json({
+        message:"you'r not cretaed this post"
+      })
+    }
+  }
+  else{
+    res.json({
+      message:"Your not created this post"
+    })
+  }
+  
+})
+
+
 
 module.exports = router;        
   
