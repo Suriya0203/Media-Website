@@ -34,7 +34,7 @@ router.post("/login",  (req, res) => {
                 })
               } else if (result == true) {
                 const user={id:user_details._id}
-                const token=jwt.sign({user},'my_secret_key')
+                const token=jwt.sign({user},'my_secret_key',{ expiresIn: 360000 })
                 //console.log(user.id)
                 req.session.auth=true
                 req.session.userId=profile.id
@@ -54,9 +54,10 @@ router.post("/login",  (req, res) => {
       }); 
       //console.log(req.user_details.id)
   });
-router.get('/api/protected',ensuretoken,(req,res)=>{
+router.get('/api/protected',(req,res)=>{
   console.log(req.token)
-  jwt.verify(req.token,'my_secret_key',function(err,data){
+  const token = req.header("auth-token");
+  jwt.verify(token,'my_secret_key',function(err,data){
     if(err){
       res.send(err)
     }
@@ -69,18 +70,6 @@ router.get('/api/protected',ensuretoken,(req,res)=>{
   })  
 })
 
-function ensuretoken(req,res,next){
-  const bearerHeader=req.headers['authorization']
-  if(typeof bearerHeader!='undefined'){
-    const bearer=bearerHeader.split(" ")
-    const bearerToken=bearer[1]
-    req.token=bearerToken
-    console.log(bearerToken)
-    next()
-  }else{
-    res.send('error')
-  }
-}
 
 router.post("/signup",  (req, res) => {
     
@@ -119,6 +108,7 @@ router.post("/signup",  (req, res) => {
       });
   });
   router.get('/logout',(req,res)=>{
+    //jwt.destroy()
     req.session.destroy((err)=>{
       if (err) throw err
       else{
@@ -126,22 +116,6 @@ router.post("/signup",  (req, res) => {
           message:'logout successfully'
         })
       }
-    })
-  })
-  router.put('/editprofile',(req,res)=>{
-    //console.log(req.body)
-    const profile_data=user_details.findByIdAndUpdate(req.session.userId,
-    {
-      $push:{name:req.body.name}
-    })
-    .then(result=>{
-      res.json({
-        result:result
-      })
-    }).catch(err=>{
-      res.json({
-        error:err}
-      )
     })
   })
 module.exports=router

@@ -22,14 +22,15 @@ const Storage=multer.diskStorage({
 const upload=multer({
     storage:Storage
 }).single('image')
-router.post('/createpost',auth,(req,res)=>{
+router.post('/createpost',auth,async(req,res)=>{
   //console.log(req.user)  
-  upload(req,res,(err)=>{
+  try{
+   upload(req,res,(err)=>{
         if (err){
             console.log(err)
         }
         else{
-            const newImage=new image({
+            const newImage= new image({
                 name:req.body.name,
                 image:{
                     data:req.filename,
@@ -38,50 +39,71 @@ router.post('/createpost',auth,(req,res)=>{
                 createdBy:req.session.userId//req.body.createrid
                 //user:getUser()
             })
-            newImage.save().then(()=>{
-                res.json({
-                  message:"post created successfully"
-                })
-            }).catch(err=>console.log(err))
+            newImage.save()
+            if(newImage){
+              res.status(200).json({
+                message:"Post created successfully"
+              })
+            }
+            else{
+              res.status(401)
+            }
         }
-    })
+    })}
+    catch(err){
+      console.log(err.message)
+    }
 })
-router.get('/getpost/:id',auth,(req,res)=>{
+router.get('/getpost/:id',auth,async(req,res)=>{
     id=req.params.id
     //console.log(req.auth.email)
-    image.findById(id,(err,data)=>{
-        if(!err){
+    try{
+    const data=await image.findById(id)
+        if(data){
             //res.send(data)
-            res.json({
+            res.status(200).json({
               data:data
             })
         }
         else{
-            console.log(err)
+           // console.log(err)
+           res.status(404).json({
+             message:"Post not found"
+           })
         }
-    })
+    }
+    catch(err){
+      res.status(500).json({
+        message:"server error"
+      })
+    }
 })
-router.delete('/deletepost/:id',auth,(req,res)=>{
-      image.deleteOne( { _id: Mongoose.Types.ObjectId(req.params.id ),createdBy:req.session.userId} )
-      .then(result=>{
-        //console.log(result.deletedCount)
-        if(result.deletedCount){
-        res.json({
-          message:'successfully deleted',
-          result:result
-        })}
-        else{
-          res.json({
-            message:"Post is not excist"
-          })
-        }
-      })
-      .catch(err=>{
-        res.json({
-          error:err
+router.delete('/deletepost/:id',auth,async(req,res)=>{
+  try{  
+    const check=await image.findById(req.params.id)
+    if (check){
+      if(check.createdBy.toString()==req.session.userId.toString()){
+        await check.remove()
+        return res.status(200).json({
+          message:"post deleted successfully"
         })
-      })
+      }
+      else{
+        res.status(401).json({
+          message:"User Unauthorised"
+        })
+
+      }
+    }
+
 }
+  catch(err){
+    res.status(500).json({
+      message:"Server Error"
+    })
+  }
+}
+
 
   )
 
@@ -89,10 +111,11 @@ router.delete('/deletepost/:id',auth,(req,res)=>{
 
 router.put('/addlike',auth,async(req,res)=>{
     // console.log(req.body.id)
+    try{
     let posts = await image.findById(req.body.id);
     console.log(posts)
     if (!posts){
-      res.json({
+      res.status(404).json({
         message:`No post with id${req.body.id}`
       })
     }
@@ -114,12 +137,18 @@ router.put('/addlike',auth,async(req,res)=>{
     );
     res.status(StatusCodes.OK).json({ posts });
   }
+}catch(err){
+  res.status(500).json({
+    message:"Server error"
+  })
+}
 })
-  router.delete('/removelike',auth,async(req,res)=>{
+router.delete('/removelike',auth,async(req,res)=>{
+    try{
     let posts = await image.findById(req.body.id);
     console.log(posts)
     if (!posts){
-      res.json({
+      res.status(404).json({
         message:`No post with id${req.body.id}`
       })
     }
@@ -141,13 +170,19 @@ router.put('/addlike',auth,async(req,res)=>{
       res.json({
         message:"you'r not liked this post"
       })}
-
+    }
+    catch(err){
+      res.status(500).json({
+        message:"Server error"
+      })
+    }
   })
-  router.post('/addcomment', auth,async(req,res)=>{
+router.post('/addcomment', auth,async(req,res)=>{
+    try{
     var post=await image.findById(req.body.postId)
     console.log(post)
     if (post=="null"){
-      res.json({
+      res.status(404).json({
         messsage:"NO post in this id"
       })
     }
@@ -158,7 +193,7 @@ router.put('/addlike',auth,async(req,res)=>{
       postId:req.body.postid
     })
     newComment.save().then(result=>{
-      res.json({
+      res.status(200).json({
         message:"comment added successfully",
         result:result
       })
@@ -166,49 +201,68 @@ router.put('/addlike',auth,async(req,res)=>{
       res.json({
         error:err
       })
-    })}
+    })}}
+  catch(err){
+    res.status(500).json({
+      message:"Server error"
+    })
+  }
 })
 router.get('/viewpost',auth,async(req,res)=>{
-  await image.find({createdBy:req.session.userId}).then(
-    result=>{
-      res.send(result)
-    }
-  ).catch(
-    err=>{
-        res.send(err)
-    }
-  )
+  try{
+  const data=await image.find({createdBy:req.session.userId})
+  if(data){
+    res.status(200).json({
+      data:data
+    })
+  }
+  else{
+    res.status(401).json({
+      message:"No post in this ID"
+    })
+  }
+}
+  catch(err){
+    res.status(500).json({
+      message:"Server error"
+    })
+  }
 
 })
 router.delete('/deletecomment',auth,async(req,res)=>{
+  try{
   var post=await comments_data.findById({_id:req.body.id})
   console.log(post)
   if(post!="null"){
     //res.send(post.commentedBy)
     if(post.commentedBy.toString()==req.session.userId.toString()){
-        var del=await comments_data.findByIdAndDelete({_id:req.body.id}).then(
-          result=>{
-            res.json({
-              message:"comment deleted successfully"
-            }).catch(err=>{
-              res.send(err)
+        var del=await comments_data.findByIdAndDelete({_id:req.body.id})
+        if(del){
+            res.status(200).json({
+              message:"comment deleted succesfully"
             })
-          }
-        )
+        }
+        else{
+          res.status(401).json({
+            message:"User Unauthorized"
+          })
+        }
     }
-    else{
-      res.json({
+  else{
+      res.status(401).json({
         message:"you'r not comment this post"
       })
     }
-  }
-  else{
-    res.json({
-      message:"Your not comment this post"
+    
+  }}
+  catch(err){
+    res.status(500).json({
+      message:"Server error"
     })
   }
 })
 router.put('/editcomment',auth,async(req,res)=>{
+  try{
   var post=await comments_data.findById({_id:req.body.id})
   console.log(post)
   if(post!="null"){
@@ -216,15 +270,17 @@ router.put('/editcomment',auth,async(req,res)=>{
     if(post.commentedBy.toString()==req.session.userId.toString()){
         var del=await comments_data.findByIdAndUpdate({_id:req.body.id},{
           $set:{comment:req.body.comment}
-        }).then(
-          result=>{
-            res.json({
-              message:"comment edited successfully"
-            }).catch(err=>{
-              res.send(err)
-            })
-          }
-        )
+        })
+        if(del){
+          res.status(200).json({
+            message:"comment edited successfully "
+          })
+        }
+        else{
+          res.status(401).json({
+            message:"User unauthorized"
+          })
+        }
     }
     else{
       res.json({
@@ -236,10 +292,16 @@ router.put('/editcomment',auth,async(req,res)=>{
     res.json({
       message:"Your not comment this post"
     })
+  }}
+  catch(err){
+    res.status(500).json({
+      message:"Server error"
+    })
   }
 })
 router.put('/editpost',auth,async(req,res)=>{
   console.log(req.body.id)
+  try{
   var post=await image.findById({_id:req.body.id})
   console.log(post)
   if(post!="null"){
@@ -247,15 +309,17 @@ router.put('/editpost',auth,async(req,res)=>{
     if(post.createdBy.toString()==req.session.userId.toString()){
         var del=await image.findByIdAndUpdate({_id:req.body.id},{
           $set:{name:req.body.name}
-        }).then(
-          result=>{
-            res.json({
-              message:"post edited successfully"
-            }).catch(err=>{
-              res.send(err)
-            })
-          }
-        )
+        })
+        if(del){
+          res.status(200).json({
+            message:"Post edited successfully"
+          })
+        }
+        else{
+          res.status(401).json({
+            message:"User unauthorized"
+          })
+        }
     }
     else{
       res.json({
@@ -268,7 +332,12 @@ router.put('/editpost',auth,async(req,res)=>{
       message:"Your not created this post"
     })
   }
-  
+}
+catch(err){
+  res.status(500).json({
+    message:"Server error"
+  })
+}
 })
 
 

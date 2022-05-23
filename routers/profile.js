@@ -7,34 +7,10 @@ var auth=require("../middleware/auth")
 var Mongoose=require("mongoose")
 var User=require('./login')
 const { route } = require("./post")
-router.get('/profile/:id',auth,(req,res)=>{
-    id=req.params.id
-    console.log(User.don)
-    //const {ide}=req.user
-    //console.log(ide)
-    console.log(req.user_details)
-    user_details.findById(id,(err,data)=>{
-        if(!err){
-            res.json({
-              //data:data,
-              name:data.name,
-              email:data.email,
-              gender:data.gender,
-              phone:data.phone,
-              friends:data.friends,
-              user:req.user
-            })
-        }
-        else{
-            console.log(err)
-        }
-    })
-})
-
-
 router.put('/addfriend',auth,async(req,res)=>{
     //console.log(User.)
     //user_id=req.body.user_id
+    try{
     friend_id=req.body.friend_id.toString()
     let posts = await user_details.findById(req.session.userId);
     console.log(friend_id)
@@ -58,32 +34,47 @@ router.put('/addfriend',auth,async(req,res)=>{
       
     }
     )
-    .then(result=>{
-      res.json({
-        message:'friend added successfully ',
-        result:result
-      })
-    })
-    .catch(err=>{
+    if(friend){      res.json({
+      message:'friend added successfully ',
+      result:result
+    })}
+
+    }}
+  catch(err){
       res.json({
         error:err
       })
-    })}
+  }
   })
-  router.get("/search/:id",auth,(req,res)=>{
-    const search=user_details.findById(req.params.id,(err,data)=>{
-      if(!err){
-        res.send(data)
-      }
-      else{
-        console.log(err)
-      }
-    })
+  router.get("/search/:id",auth,async(req,res)=>{
+    try{
+      const data=await user_details.findById(req.params.id)
+        if(data){
+            res.status(200).json({
+              //data:data,
+              name:data.name,
+              email:data.email,
+              gender:data.gender,
+              phone:data.phone,
+              friends:data.friends,
+              user:req.user
+            })
+        }
+        else{
+            //console.log(err)
+            res.status(404)
+        }}
+        catch(err){
+          res.status(500).json({
+            messsage:"Server error"
+          })
+        }
   })
-router.get('/profile',auth,(req,res)=>{
-  user_details.findById(req.session.userId,(err,data)=>{
-    if(!err){
-        res.json({
+router.get('/profile',auth,async(req,res)=>{
+  try{
+  const data=await user_details.findById(req.session.userId)
+    if(data){
+        res.status(200).json({
           //data:data,
           name:data.name,
           email:data.email,
@@ -94,11 +85,17 @@ router.get('/profile',auth,(req,res)=>{
         })
     }
     else{
-        console.log(err)
+        //console.log(err)
+        res.status(404)
+    }}
+    catch(err){
+      res.status(500).json({
+        messsage:"Server error"
+      })
     }
 })
-})
 router.delete('/removefriend',auth,async(req,res)=>{
+  try{
   friend_id=req.body.friend_id.toString()
   let posts = await user_details.findById(req.session.userId);
   console.log(friend_id)
@@ -115,36 +112,36 @@ router.delete('/removefriend',auth,async(req,res)=>{
       
     }
     )
-    .then(result=>{
+    if(friend){
       res.json({
-        message:'friend removed successfully ',
-        result:result
-      })
-    })
-    .catch(err=>{
+      message:'friend removed successfully ',
+      result:result
+    })}}}
+    catch(err){
       res.json({
-        error:err
+        message:"error"
       })
-    })}
+    }
+  })
 
   //console.log(user_id)
-  //console.log(friend_id)
-  else{
-    res.json({
-      message:"He's not your friend"
-    })}
-})
+  //console.log(friend_id
 router.put('/editprofile',async(req,res)=>{
   console.log(req.body.name)
-  await user_details.findByIdAndUpdate(req.session.userId,
+  try{
+  const data=await user_details.findByIdAndUpdate(req.session.userId,
     {
       $set:{name:req.body.name}
     }
 
-  ).then(result=>
-    res.json({
-      message:"profile updated successfully"}
-    )
   )
-})
+  if(data){
+    res.json({
+      message:'success'
+    })
+  }
+}
+catch(err){
+  console.log(err)
+}})
 module.exports = router; 
