@@ -4,32 +4,17 @@ var app=express()
 const connectDB = require('./config/db');
 const multer=require('multer')
 var path=require('path')
-const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session);
 app.use(express.static('public'))
 var auth=require("./middleware/auth")
-
+const cors=require("cors"
+)
 app.use(express.static(path.join(__dirname,'public')))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.set('view engine', 'ejs');
 require('dotenv').config();
-const store = new MongoDBStore({
-    uri: process.env.DB,
-    collection: "mySessions",
-  });
-app.use(
-    session({
-      secret: process.env.SECRET,
-      resave: false,
-      saveUninitialized: false,
-      store: store,
-      cookie:{
-        maxAge:1000*60*60*2,
-        sameSite:true,
-      }
-    })
-  );
+app.use(cors())
+
 
 const upload=multer({dest:'uploads/'})
 //var user=require('./routers/approutes')
@@ -48,7 +33,6 @@ app.get('/name',auth,(req,res)=>{
     
     res.send('suriya')
 })
-
 // Load Config
 //dotenv.config({path: './config/config.env'})
 

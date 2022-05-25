@@ -1,123 +1,136 @@
 var router=require("express").Router()
-var user_details=require('../model/user_db')
+//var user_details=require('../model/user_db')
 var mongo=require('../config/db')
-var image=require('../model/post')
-var don=null
-var saltRounds = 10; 
+var don=null 
 //router.post('/login',login_validate);
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
-
+const { check, validationResult } = require("express-validator");
+const User = require("../model/user_db");
+var jwtSecret = "mysecrettoken";
 var auth=require("../middleware/auth")
 
-router.post("/login",  (req, res) => {
-    var newUser = {};
-    newUser.name = req.body.email;
-    newUser.password = req.body.password;
-    
-     user_details.findOne({ email: newUser.name })
-      .then(profile => {
-        //console.log(profile.email)
-        if (!profile) {
-          res.send("User not exist");
-        } else {
-          var don=profile.email
-          console.log(don,123456)
-          bcrypt.compare(
-            newUser.password,
-            profile.password,
-             (err, result) => {
-              if (err) {
-                console.log("Error is", err.message);
-                res.json({
-                  message:"password incorrect"
-                })
-              } else if (result == true) {
-                const user={id:user_details._id}
-                const token=jwt.sign({user},'my_secret_key',{ expiresIn: 360000 })
-                //console.log(user.id)
-                req.session.auth=true
-                req.session.userId=profile.id
-                console.log(req.session.userId)
-                res.json({
-                  token:token,
-                data:profile});
-              } else {
-                res.send("User Unauthorized Access");
-              }
-            }
-          );
-        }
-      })
-      .catch(err => {
-        console.log("Error is ", err.message);
-      }); 
-      //console.log(req.user_details.id)
-  });
-router.get('/api/protected',(req,res)=>{
-  console.log(req.token)
-  const token = req.header("auth-token");
-  jwt.verify(token,'my_secret_key',function(err,data){
-    if(err){
-      res.send(err)
-    }
-    else{
-      res.json({
-        Text:'this is protected',
-        data:data
-      })
-    }
-  })  
-})
+router.post(
+	"/login",
+	[
+		check("email", "Please include a valid email").isEmail(),
+		check("password", "Password is required").exists(),
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
 
+		const { email, password } = req.body;
 
-router.post("/signup",  (req, res) => {
-    
-    var newUser = new user_details({
-      name: req.body.name,
-      password: req.body.password,
-      email:req.body.email,
-      gender:req.body.gender,
-      phone:req.body.phone
-    });
-  
-     user_details.findOne({ email: newUser.email })
-      .then( profile => {
-        if (!profile) {
-          bcrypt.hash(newUser.password, saltRounds,  (err, hash) => {
-            if (err) {
-              console.log("Error is", err.message);
-            } else {
-              newUser.password = hash;
-               newUser
-                .save()
-                .then(() => {
-                  res.status(200).send(newUser);
-                })
-                .catch(err => {
-                  console.log("Error is ", err.message);
-                });
-            }
-          });
-        } else {
-          res.send("User already exists...");
-        }
-      })
-      .catch(err => {
-        console.log("Error is", err.message);
-      });
-  });
-  router.get('/logout',(req,res)=>{
+		try {
+			// See if user exists
+			let user = await User.findOne({ email });
+
+			if (!user) {
+				return res
+					.status(400)
+					.json({ errors: [{ msg: "Invalid Credentials" }] });
+			}
+
+			const isMatch = await bcrypt.compare(password, user.password);
+
+			if (!isMatch) {
+				return res
+					.status(400)
+					.json({ errors: [{ msg: "Invalid Credentials" }] });
+			}
+
+			//Return jsonwebtoken
+			const payload = {
+				user: {
+					id: user.id,
+				},
+			};
+
+			jwt.sign(payload, jwtSecret, { expiresIn: "5 days" }, (err, token) => {
+				if (err) throw err;
+				res.json({ token });
+			});
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).send("Server error");
+		}
+	}
+);
+router.post(
+	"/signup",
+	[
+		check("name", "Name is required").not().isEmpty(),
+		check("email", "Please include a valid email").isEmail(),
+		check(
+			"password",
+			"Please enter password with 6 or more characters"
+		).isLength({ min: 5 }),
+	],
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json({ errors: errors.array() });
+		}
+
+		const { name, email, password } = req.body;
+
+		try {
+			// See if user exists
+			let user = await User.findOne({ email });
+
+			if (user) {
+				res.status(400).json({ errors: [{ msg: "User already exists" }] });
+			}
+			user = new User({
+				name,
+				email,
+				password,
+			});
+
+			//Encrypt Password
+			const salt = await bcrypt.genSalt(10);
+
+			user.password = await bcrypt.hash(password, salt);
+
+			await user.save();
+
+			//Return jsonwebtoken
+			const payload = {
+				user: {
+					id: user.id,
+				},
+			};
+
+			jwt.sign(payload, jwtSecret, { expiresIn: 3 }, (err, token) => {
+				if (err) throw err;
+				res.json({ token });
+			});
+		} catch (err) {
+			console.error(err.message);
+			res.status(500).send("Server error");
+		}
+	}
+);
+router.get('/logout',(req,res)=>{
     //jwt.destroy()
-    req.session.destroy((err)=>{
-      if (err) throw err
-      else{
-        res.json({
-          message:'logout successfully'
-        })
-      }
+    const token = req.header("x-auth-token");
+    jwt.destroy(token)
+    res.status(200).json({
+      message:"Logout successfully"
     })
   })
+router.get("/auth", auth, async (req, res) => {
+	try {
+		const user = await User.findById(req.user.id);
+		res.json(user);
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send("Server Error");
+	}
+});
 module.exports=router
 module.exports.don=don;
 //module.exports=user

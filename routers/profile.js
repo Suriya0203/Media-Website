@@ -8,11 +8,9 @@ var Mongoose=require("mongoose")
 var User=require('./login')
 const { route } = require("./post")
 router.put('/addfriend',auth,async(req,res)=>{
-    //console.log(User.)
-    //user_id=req.body.user_id
     try{
     friend_id=req.body.friend_id.toString()
-    let posts = await user_details.findById(req.session.userId);
+    let posts = await user_details.findById(req.user.id);
     console.log(friend_id)
     // if (!posts) {
     //   res.json({
@@ -28,7 +26,7 @@ router.put('/addfriend',auth,async(req,res)=>{
     //console.log(user_id)
     //console.log(friend_id)
     else{
-    const friend=await user_details.findByIdAndUpdate(req.session.userId,{
+    const friend=await user_details.findByIdAndUpdate(req.user.id,{
       
       $push:{friends:friend_id}
       
@@ -72,7 +70,7 @@ router.put('/addfriend',auth,async(req,res)=>{
   })
 router.get('/profile',auth,async(req,res)=>{
   try{
-  const data=await user_details.findById(req.session.userId)
+  const data=await user_details.findById(req.user.id)
     if(data){
         res.status(200).json({
           //data:data,
@@ -97,7 +95,7 @@ router.get('/profile',auth,async(req,res)=>{
 router.delete('/removefriend',auth,async(req,res)=>{
   try{
   friend_id=req.body.friend_id.toString()
-  let posts = await user_details.findById(req.session.userId);
+  let posts = await user_details.findById(req.user.id);
   console.log(friend_id)
   // if (!posts) {
   //   res.json({
@@ -106,7 +104,7 @@ router.delete('/removefriend',auth,async(req,res)=>{
   //   //throw new NotFoundError(`No post with id${req.body.id}`);
   // }console.log(posts.friends)
   if ( posts.friends.includes(friend_id)){
-    const friend=await user_details.findByIdAndUpdate(req.session.userId,{
+    const friend=await user_details.findByIdAndUpdate(req.user.id,{
     
       $pull:{friends:friend_id}
       
@@ -129,7 +127,7 @@ router.delete('/removefriend',auth,async(req,res)=>{
 router.put('/editprofile',async(req,res)=>{
   console.log(req.body.name)
   try{
-  const data=await user_details.findByIdAndUpdate(req.session.userId,
+  const data=await user_details.findByIdAndUpdate(req.user.id,
     {
       $set:{name:req.body.name}
     }

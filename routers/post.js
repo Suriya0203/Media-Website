@@ -36,7 +36,7 @@ router.post('/createpost',auth,async(req,res)=>{
                     data:req.filename,
                     contentType:'image/png'
                 },
-                createdBy:req.session.userId//req.body.createrid
+                createdBy:req.user.id//req.body.createrid
                 //user:getUser()
             })
             newImage.save()
@@ -82,7 +82,7 @@ router.delete('/deletepost/:id',auth,async(req,res)=>{
   try{  
     const check=await image.findById(req.params.id)
     if (check){
-      if(check.createdBy.toString()==req.session.userId.toString()){
+      if(check.createdBy.toString()==req.user.id.toString()){
         await check.remove()
         return res.status(200).json({
           message:"post deleted successfully"
@@ -120,8 +120,8 @@ router.put('/addlike',auth,async(req,res)=>{
       })
     }
     // throw new NotFoundError(`No post with id${req.body.id}`);
-    console.log(posts.likes)
-    if ( posts.likes.includes(req.session.userId.toString())){
+    //console.log(posts.likes)
+    else if ( posts.likes.includes(req.user.id.toString())){
       res.json({
         message:"you'r already liked"
       })
@@ -131,7 +131,7 @@ router.put('/addlike',auth,async(req,res)=>{
     posts = await image.findByIdAndUpdate(
       req.body.id,
       {
-        $push: { likes: req.session.userId },
+        $push: { likes: req.user.id },
       },
       { new: true, runValidators: true }
     );
@@ -153,12 +153,12 @@ router.delete('/removelike',auth,async(req,res)=>{
       })
     }
     // throw new NotFoundError(`No post with id${req.body.id}`);
-    console.log(posts.likes)
-    if ( posts.likes.includes(req.session.userId.toString())){
+    //console.log(posts.likes)
+    else if ( posts.likes.includes(req.user.id.toString())){
       posts = await image.findByIdAndUpdate(
         req.body.id,
         {
-          $pull: { likes: req.session.userId },
+          $pull: { likes: req.user.id },
         },
         { new: true, runValidators: true }
       );
@@ -189,7 +189,7 @@ router.post('/addcomment', auth,async(req,res)=>{
     else{
     var newComment = new comments_data({
       comment: req.body.comment,
-      commentedBy: req.session.userId,
+      commentedBy: req.user.id,
       postId:req.body.postid
     })
     newComment.save().then(result=>{
@@ -210,7 +210,7 @@ router.post('/addcomment', auth,async(req,res)=>{
 })
 router.get('/viewpost',auth,async(req,res)=>{
   try{
-  const data=await image.find({createdBy:req.session.userId})
+  const data=await image.find({createdBy:req.user.id})
   if(data){
     res.status(200).json({
       data:data
@@ -235,7 +235,7 @@ router.delete('/deletecomment',auth,async(req,res)=>{
   console.log(post)
   if(post!="null"){
     //res.send(post.commentedBy)
-    if(post.commentedBy.toString()==req.session.userId.toString()){
+    if(post.commentedBy.toString()==req.user.id.toString()){
         var del=await comments_data.findByIdAndDelete({_id:req.body.id})
         if(del){
             res.status(200).json({
@@ -267,7 +267,7 @@ router.put('/editcomment',auth,async(req,res)=>{
   console.log(post)
   if(post!="null"){
     //res.send(post.commentedBy)
-    if(post.commentedBy.toString()==req.session.userId.toString()){
+    if(post.commentedBy.toString()==req.user.id.toString()){
         var del=await comments_data.findByIdAndUpdate({_id:req.body.id},{
           $set:{comment:req.body.comment}
         })
@@ -306,7 +306,7 @@ router.put('/editpost',auth,async(req,res)=>{
   console.log(post)
   if(post!="null"){
     //res.send(post.commentedBy)
-    if(post.createdBy.toString()==req.session.userId.toString()){
+    if(post.createdBy.toString()==req.user.id.toString()){
         var del=await image.findByIdAndUpdate({_id:req.body.id},{
           $set:{name:req.body.name}
         })
