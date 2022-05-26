@@ -3,11 +3,12 @@ import { BrowserRouter as Router,Routes, Route } from 'react-router-dom';
 
 import Login from './components/login';
 // import Home from './components/home'
-//import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utils/setAuthToken";
 import store from "./store";
 import Dashboard from "./components/dashboard";
+import Register from "./components/register";
 
 
 if (localStorage.token) {
@@ -21,6 +22,7 @@ const App = ()=>{
       <Router>
         <Routes>
             <Route exact path="/login" element={ <Login/> } />
+            <Route exact path="/register" element={ <Register/> } />
             <Route exact path="/dashboard" element={ <Dashboard/> } />
           </Routes>
         </Router>

@@ -60,7 +60,7 @@ router.post(
 	}
 );
 router.post(
-	"/signup",
+	"/register",
 	[
 		check("name", "Name is required").not().isEmpty(),
 		check("email", "Please include a valid email").isEmail(),

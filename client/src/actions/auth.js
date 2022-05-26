@@ -44,7 +44,7 @@ export const register =
 
 		try {
 			const res = await axios.post(
-				"hhttp://localhost:2000/register",
+				"http://localhost:2000/register",
 				body,
 				config
 			);
@@ -56,12 +56,10 @@ export const register =
 
 			dispatch(loadUser());
 		} catch (err) {
-			const errors = err.response.data.errors;
 
-			if (errors) {
 				// errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
-                console.log(errors)
-            }
+            console.log(err)
+            
 
 			dispatch({
 				type: REGISTER_FAIL,
