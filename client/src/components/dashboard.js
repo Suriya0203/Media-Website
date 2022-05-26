@@ -1,13 +1,19 @@
 import React from "react";
-import { connect } from "react-redux";
+// import { connect } from "react-redux";
 import PropTypes from "prop-types";
-
-const Dashboard = ({ auth: { user } }) => {
+import { connect } from "react-redux"
+import { Navigate } from "react-router-dom";
+const Dashboard = ({ auth: { user,isAuthenticated } }) => {
+	if(isAuthenticated){
 	return (
-		<div style={{ marginTop: "5rem", textAlign: "center" }}>
+		<div style={{ textAlign: "center" }}>
+			<h1>Home page</h1>
 			<h1>Welcome, {user && user.name}</h1>
 		</div>
-	);
+	);}
+	else{
+		return <Navigate to="/login" />;
+	}	
 };
 Dashboard.propTypes = {
 	auth: PropTypes.object.isRequired,
