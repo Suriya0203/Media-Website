@@ -7,7 +7,7 @@ import Login from './components/login';
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utils/setAuthToken";
 import store from "./store";
-import PrivateRoute from "./routing/Privateroute";
+//import PrivateRoute from "./routing/Privateroute";
 import Dashboard from "./components/dashboard";
 if (localStorage.token) {
 	setAuthToken(localStorage.token);
