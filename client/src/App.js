@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { BrowserRouter as Router,Routes, Route } from 'react-router-dom';
 
 import Login from './components/login';
-import Home from './components/home'
+// import Home from './components/home'
 //import 'bootstrap/dist/css/bootstrap.min.css';
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utils/setAuthToken";
