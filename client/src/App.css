@@ -1,39 +1,62 @@
-.App {
-  text-align: center;
+body{
+  background-color: rgb(105, 162, 189);
+}
+.login-form {
+	width: 29%;
+  height: 430px;
+	text-align: center;
+	margin: 6rem auto;
+	justify-content: center;
+  border-radius: 20px;
+  background-color: whitesmoke;
+}
+.register-form {
+	width: 29%;
+  height: 530px;
+	text-align: center;
+	margin: 2rem auto;
+	justify-content: center;
+  border-radius: 20px;
+  background-color: whitesmoke;
+}
+input[type=text],[type= email],[type= password]{
+  border: none;
+  border-bottom: 2px solid black;
+  background-color: whitesmoke;
+}
+.form input {
+	width: 50%;
+	padding: 10px;
+	margin: 10px;
+  
+
+}
+.btn {
+	width: 52%;
+	padding: 10px;
+	margin: 10px;
+	background: #08b883;
+	color: #fff;
+	outline: none;
+	border: none;
+	border-radius: 20px;
+	font-size: 18px;
+	cursor: pointer;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.btn:hover {
+	background: transparent;
+	border: 2px solid #6cafa4;
+	color: #6cafa4;
+}
+.lead {
+	font-size: 25px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-float infinite 3s ease-in-out;
-  }
+.heading {
+	font-size: 40px;
 }
 
-.App-header {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-}
-
-.App-link {
-  color: rgb(112, 76, 182);
-}
-
-@keyframes App-logo-float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+.link a {
+	color: #6cafa4;
 }

@@ -33,11 +33,12 @@ const Register = ({register, isAuthenticated }) => {
 
 	return (
 		<div className="register-form">
+			<br />
 			<h1 className="heading">Sign Up</h1>
 			<p className="lead">
 				<i className="fas fa-user"></i> Create Your Account
 			</p>
-			<br />
+		
 			<form className="form" onSubmit={(e) => onSubmit(e)}>
 				<div className="form-group">
 					<input

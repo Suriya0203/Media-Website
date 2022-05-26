@@ -29,12 +29,13 @@ const Login = ({ login, isAuthenticated }) => {
 
 	return (
 		<div className="login-form">
+			<br />
 			<h1 className="heading">Sign In</h1>
 			<p className="lead">
 				<i className="fas fa-user"></i> Sign Into Your Account
 			</p>
 			
-			<br />
+			
 			<form className="form" onSubmit={(e) => onSubmit(e)}>
 				<div className="form-group">
 					<input
