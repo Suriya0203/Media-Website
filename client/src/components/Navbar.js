@@ -199,6 +199,7 @@ const ResponsiveAppBar = () => {
               </IconButton>
             </Tooltip>
             <Menu
+            
               sx={{ mt: '45px' }}
               id="menu-appbar"
               anchorEl={anchorElUser}
@@ -212,13 +213,14 @@ const ResponsiveAppBar = () => {
                 horizontal: 'right',
               }}
               open={Boolean(anchorElUser)}
+              
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
+              <MenuItem component="a" href="/profile">Profile</MenuItem>
+              <MenuItem component="a" href="/account">Account</MenuItem>
+              
+              <MenuItem component="a" href="/dashboard">Dashbaord</MenuItem>
+              <MenuItem component="a" href="/logout">Logout</MenuItem>
             </Menu>
           </Box>
         </Toolbar>

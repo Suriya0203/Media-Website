@@ -14,6 +14,7 @@ const Profile = ({ auth: { user,isAuthenticated } }) => {
 			{/* <h1>Home page</h1> */}
 			<h1> {user && user.name}</h1>
             <h2> {user && user.email}</h2>
+			<h2> {user && user.friends}</h2>
             {/* <h3> {user && user.name}</h3> */}
 		</div>
 		</div>
