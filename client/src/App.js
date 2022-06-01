@@ -12,6 +12,11 @@ import Dashboard from "./components/dashboard";
 import Register from "./components/register";
 import ResponsiveAppBar from "./components/Navbar"
 
+import Post from './components/post'
+import FriendsPage from './components/friendspage'
+import Createpost from './components/createpost'
+import Viewpost from "./components/viewpost";
+import {ViewFriends} from './components/friends'
 if (localStorage.token) {
 	setAuthToken(localStorage.token);
 }
@@ -28,6 +33,11 @@ const App = ()=>{
             <Route exact path="/dashboard" element={ <Dashboard/> } />
             <Route exact path="/profile" element={ <Profile/> } />
             <Route exact path="/navbar" element={ <ResponsiveAppBar/> } />
+            <Route exact path="/friends" element={ <FriendsPage/> } />
+            <Route exact path="/view_friends" element={ <ViewFriends/> } />
+            <Route exact path="/post" element={ <Post/> } />
+            <Route exact path="/createpost" element={ <Createpost/> } />
+            <Route exact path="/viewpost" element={ <Viewpost/> } />
           </Routes>
         </Router>
     )};

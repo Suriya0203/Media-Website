@@ -17,7 +17,7 @@ import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 
 import SearchIcon from '@mui/icons-material/Search';
-const pages = ['Post', 'Friends', 'Message'];
+const pages = ['Post', 'Friends', 'Messagec'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -94,6 +94,7 @@ const ResponsiveAppBar = () => {
   };
 
   return (
+    
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
@@ -146,11 +147,11 @@ const ResponsiveAppBar = () => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
+            <MenuItem component="a" href="/post">POST</MenuItem>
+              <MenuItem component="a" href="/friends">FRIENDS</MenuItem>
+              
+              <MenuItem component="a" href="/message">MESSAGE</MenuItem>
+             
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -170,18 +171,15 @@ const ResponsiveAppBar = () => {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            HOME
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+            <MenuItem component="a" href="/post">POST</MenuItem>
+              <MenuItem component="a" href="/friends">FRIENDS</MenuItem>
+              
+              <MenuItem component="a" href="/message">MESSAGE</MenuItem>
+
+            {/* sx={{ my: 2, color: 'white', display: 'block' }} */}
           </Box>
           <Search>
             <SearchIconWrapper>

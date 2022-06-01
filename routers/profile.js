@@ -124,12 +124,12 @@ router.delete('/removefriend',auth,async(req,res)=>{
 
   //console.log(user_id)
   //console.log(friend_id
-router.put('/editprofile',async(req,res)=>{
+router.post('/editprofile',async(req,res)=>{
   console.log(req.body.name)
   try{
   const data=await user_details.findByIdAndUpdate(req.user.id,
     {
-      $set:{name:req.body.name}
+      $set:{name:req.body.name,email:req.body.email,phone:req.body.phone}
     }
 
   )

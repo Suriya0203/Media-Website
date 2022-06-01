@@ -7,6 +7,11 @@ import {
 	LOGIN_SUCCESS,
 	LOGIN_FAIL,
 	LOGOUT,
+	FRIENDS_DETAILS,
+	IMAGE_UPLOAD_SUCCESS,
+	IMAGE_UPLOAD_FAIL,
+	VIEW_POST,
+	VIEW_POST_ERR
 } from "./types";
 import setAuthToken from "../utils/setAuthToken";
 
@@ -57,7 +62,7 @@ export const register =
 			dispatch(loadUser());
 		} catch (err) {
 
-				// errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+			
             console.log(err)
             
 
@@ -105,7 +110,98 @@ export const login = (email, password) => async (dispatch) => {
 };
 
 // Logout / Clear Profile
+export const friends=()=>async(dispatch)=>{
+	try{
+		const res = await axios.get(
+			"http://localhost:2000/friends",
+		);
+		dispatch({
+			type: FRIENDS_DETAILS,
+			payload:res.data
+		})
+
+	}
+	catch(err){
+
+		console.log(err)
+		dispatch({
+			type:LOGIN_FAIL
+		})
+	}
+}
 
 export const logout = () => (dispatch) => {
 	dispatch({ type: LOGOUT });
 };
+
+export const Imageupload=(formdata)=>async(dispatch)=>{
+	try {
+		const res = await axios.post(
+			"http://localhost:2000/createpost",
+			formdata,
+		);
+
+		dispatch({
+			type: IMAGE_UPLOAD_SUCCESS,
+			payload: res.data,
+		});	
+}catch(err){
+	console.log(err)
+	dispatch({
+		type: IMAGE_UPLOAD_FAIL,
+	});	
+}
+}
+export const Viewpostaction =()=>async(dispatch)=>{
+	try{
+		const res=await axios.get("http://localhost:2000/viewpost")
+		dispatch({
+			type:VIEW_POST,
+			payload:res.data
+		})
+		// console.log(res.data)
+		return res.data
+	}
+	catch(err){
+		console.log(err)
+		dispatch({
+			type:VIEW_POST_ERR
+		})
+	}
+}
+
+export const profile =
+	({ name, email, phone }) =>
+	async (dispatch) => {
+		const config = {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		};
+
+		const body = JSON.stringify({ name, email, phone });
+
+		try {
+			const res = await axios.post(
+				"http://localhost:2000/editprofile",
+				body,
+				config
+			);
+
+			dispatch({
+				type: REGISTER_SUCCESS,
+				payload: res.data,
+			});
+
+			dispatch(loadUser());
+		} catch (err) {
+
+			
+            console.log(err)
+            
+
+			dispatch({
+				type: REGISTER_FAIL,
+			});
+		}
+	};

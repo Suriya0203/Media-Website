@@ -21,6 +21,12 @@
   "@material-ui/icons": "^4.11.3",
   
     
+  "@mui-treasury/components": "^1.10.1",
+  
+    
+  "@mui-treasury/styles": "^1.13.1",
+  
+    
   "@mui/icons-material": "^5.8.0",
   
     
@@ -67,6 +73,9 @@
   
     
   "react-dom": "^18.1.0",
+  
+    
+  "react-google-font-loader": "^1.1.0",
   
     
   "react-redux": "^8.0.2",

@@ -6,6 +6,11 @@ import {
 	LOGIN_SUCCESS,
 	LOGIN_FAIL,
 	LOGOUT,
+	FRIENDS_DETAILS,
+	IMAGE_UPLOAD_FAIL,
+	IMAGE_UPLOAD_SUCCESS,
+	VIEW_POST,
+	VIEW_POST_ERR
 } from "../actions/types";
 
 const initialState = {
@@ -46,6 +51,27 @@ export default function (state = initialState, action) {
 				isAuthenticated: false,
 				loading: false,
 			};
+		case FRIENDS_DETAILS:
+			return{
+				...state,
+				isAuthenticated: true,
+				loading: false,
+				user:action.payload
+			};
+		case IMAGE_UPLOAD_SUCCESS:
+			return{
+				...state,
+				isAuthenticated: true,
+				user:payload
+				
+			}
+		case IMAGE_UPLOAD_FAIL:
+
+		case VIEW_POST:
+			return{
+				...state,
+				user:action.payload
+			}
 		default:
 			return state;
 	}

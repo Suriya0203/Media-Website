@@ -34,7 +34,7 @@ router.post('/createpost',auth,async(req,res)=>{
                 name:req.body.name,
                 image:{
                     data:req.filename,
-                    contentType:'image/png'
+                    contentType:'image/jpg' || 'image/png' || 'image/jpeg'
                 },
                 createdBy:req.user.id//req.body.createrid
                 //user:getUser()
@@ -215,6 +215,7 @@ router.get('/viewpost',auth,async(req,res)=>{
     res.status(200).json({
       data:data
     })
+    console.log(data)
   }
   else{
     res.status(401).json({
