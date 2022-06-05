@@ -45,7 +45,7 @@ var url = 'http://localhost:2000/createpost';
                     {post && (
                         <div>
                             <img 
-                                src={URL.createObjectURL(post)}
+                                src={URL.createObjectURL(post)} style={{width:"30%"}}
                             />
                             <TextField type="text" 
                                 label='Add caption'
@@ -54,7 +54,7 @@ var url = 'http://localhost:2000/createpost';
                                 style={{width:'340px', margin:'10px'} }
                                 onChange={(e)=>setCaption(e.target.value)}
                             /><br />
-                            <button type="submit">Upload</button>
+                            <button type="submit" style={{}}>Upload</button>
                             <button onClick={removeSelectedImage} >Remove</button>
                         </div>  
                     )} 
@@ -62,6 +62,11 @@ var url = 'http://localhost:2000/createpost';
                         <div className='imgButton'>
                             <img 
                                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQohH8t-0vC69qazVPNsN9Ew-CVJnw5h7NqDRBCe5lf&s" 
+                            style={{
+                                width:"30%",
+                                position:"relative",
+                                
+                            }}
                             />
                             <input type="file" id='file' name="testImage" onChange={myHandler} />
                         </div>

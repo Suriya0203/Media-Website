@@ -4,6 +4,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux"
 import { Navigate } from "react-router-dom";
 import ResponsiveAppBar from "./Navbar"
+import Fetchimages from '../components/fetchimage';
+import Images from '../components/image'
 import "./dashboard.css"
 const Dashboard = ({ auth: { user,isAuthenticated } }) => {
 	if(isAuthenticated){
@@ -11,10 +13,12 @@ const Dashboard = ({ auth: { user,isAuthenticated } }) => {
 		<div class="name">
 		<ResponsiveAppBar />
 		<div style={{ textAlign: "center" }}>
-			<h1>Home page</h1>
+			<br/>
 			<h1>Welcome, {user && user.name}</h1>
 		</div>
+		<Images/>
 		</div>
+
 	);}
 	else{
 		return <Navigate to="/login" />;

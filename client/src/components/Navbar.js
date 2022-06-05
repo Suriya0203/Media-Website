@@ -13,9 +13,9 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { styled, alpha } from '@mui/material/styles';
-
+import { Link } from "react-router-dom";
 import InputBase from '@mui/material/InputBase';
-
+import {logout} from '../actions/auth'
 import SearchIcon from '@mui/icons-material/Search';
 const pages = ['Post', 'Friends', 'Messagec'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -181,7 +181,7 @@ const ResponsiveAppBar = () => {
 
             {/* sx={{ my: 2, color: 'white', display: 'block' }} */}
           </Box>
-          <Search>
+          <Search >
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
@@ -218,7 +218,10 @@ const ResponsiveAppBar = () => {
               <MenuItem component="a" href="/account">Account</MenuItem>
               
               <MenuItem component="a" href="/dashboard">Dashbaord</MenuItem>
-              <MenuItem component="a" href="/logout">Logout</MenuItem>
+              <MenuItem component="a" h><Link onClick={logout} to="/" replace>
+					<i className="fas fa-sign-out-alt"></i>{" "}
+					<span className="hide-sm"> &nbsp;Logout</span>
+				</Link></MenuItem>
             </Menu>
           </Box>
         </Toolbar>

@@ -7,10 +7,16 @@ var auth=require("../middleware/auth")
 var Mongoose=require("mongoose")
 var User=require('./login')
 const { route } = require("./post")
-router.put('/addfriend',auth,async(req,res)=>{
+// var friend=require('../model/friends')
+const friend = require("../model/friends")
+// const friend = require("../model/friends")
+router.get('/addfriend/:friend_id/:name',auth,async(req,res)=>{
     try{
-    friend_id=req.body.friend_id.toString()
-    let posts = await user_details.findById(req.user.id);
+
+    friend_id=req.params.friend_id.toString()
+    username=req.params.name.toString()
+    console.log(friend_id,"friend id")
+    let posts = await friend.findById(req.user.id);
     console.log(friend_id)
     // if (!posts) {
     //   res.json({
@@ -18,27 +24,31 @@ router.put('/addfriend',auth,async(req,res)=>{
     //   })
     //   //throw new NotFoundError(`No post with id${req.body.id}`);
     // }console.log(posts.friends)
-    if ( posts.friends.includes(friend_id)){
-      res.json({
-        message:"He's already you'r friend"
-      })
-    }
-    //console.log(user_id)
-    //console.log(friend_id)
-    else{
-    const friend=await user_details.findByIdAndUpdate(req.user.id,{
+    // let user = await friend.findOne({ fri });
+    // if ( posts.includes(friend_id)){
+    //   res.json({
+    //     message:"He's already you'r friend"
+    //   })
+    // }
+    // console.log(user_id)
+    // console.log(friend_id)
+    // else{
+    const friend_data=await friend.create(
       
-      $push:{friends:friend_id}
+      {userId:req.user.id,
+      friendId:friend_id,
+      friendName:username}
       
-    }
     )
-    if(friend){      res.json({
+    await friend_data.save()
+    if(friend_data){      res.json({
       message:'friend added successfully ',
-      result:result
+      // result:result
     })}
 
-    }}
+    }
   catch(err){
+    console.log(err)
       res.json({
         error:err
       })
@@ -92,10 +102,12 @@ router.get('/profile',auth,async(req,res)=>{
       })
     }
 })
-router.delete('/removefriend',auth,async(req,res)=>{
+router.delete('/removefriend/:id',auth,async(req,res)=>{
   try{
-  friend_id=req.body.friend_id.toString()
-  let posts = await user_details.findById(req.user.id);
+    console.log(req.params.id,"friend id")
+  friend_id=req.params.id.toString()
+  user_id=req.user.id.toString()
+  // let posts = await user_details.findById(req.user.id);
   console.log(friend_id)
   // if (!posts) {
   //   res.json({
@@ -103,29 +115,32 @@ router.delete('/removefriend',auth,async(req,res)=>{
   //   })
   //   //throw new NotFoundError(`No post with id${req.body.id}`);
   // }console.log(posts.friends)
-  if ( posts.friends.includes(friend_id)){
-    const friend=await user_details.findByIdAndUpdate(req.user.id,{
-    
-      $pull:{friends:friend_id}
+  // if ( posts.friends.includes(friend_id)){
+    const friend_data=await friend.deleteOne({
+    userId:user_id,
+    friendId:friend_id
       
     }
     )
-    if(friend){
-      res.json({
+    console.log(friend_data)
+    if(friend_data){
+      res.status(200).json({
       message:'friend removed successfully ',
-      result:result
-    })}}}
+      result:friend_data
+    })}}
     catch(err){
+      console.log(err)
       res.json({
-        message:"error"
+        message:err
       })
     }
   })
 
   //console.log(user_id)
   //console.log(friend_id
-router.post('/editprofile',async(req,res)=>{
+router.post('/editprofile',auth,async(req,res)=>{
   console.log(req.body.name)
+  console.log(req.user.id)
   try{
   const data=await user_details.findByIdAndUpdate(req.user.id,
     {
@@ -142,4 +157,56 @@ router.post('/editprofile',async(req,res)=>{
 catch(err){
   console.log(err)
 }})
+
+
+router.get('/alluser',auth,async(req,res)=>{
+  console.log("suriya")
+  try{
+  const data=await user_details.find({_id : {$ne : req.user.id}})
+    if(data){
+        res.status(200).json({
+          //data:data,
+          data:data
+        })
+    }
+    else{
+        //console.log(err)
+        res.status(404)
+    }}
+    catch(err){
+      res.status(500).json({
+        messsage:"Server error"
+      })
+    }
+})
+
+
+
+////
+
+
+router.get('/viewfriends',auth,async(req,res)=>{
+  console.log("suriya")
+  console.log(req.user.id)
+  try{
+    const data=await friend.find({userId:req.user.id})
+    console.log(data)
+    if(data){
+        res.status(200).json({
+          //data:data,
+          data:data
+        })
+    }
+    else{
+        //console.log(err)
+        res.status(404)
+    }}
+    catch(err){
+      res.status(500).json({
+        messsage:"Server error"
+      })
+    }
+})
+
+
 module.exports = router; 

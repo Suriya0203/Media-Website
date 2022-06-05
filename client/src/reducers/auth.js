@@ -10,7 +10,12 @@ import {
 	IMAGE_UPLOAD_FAIL,
 	IMAGE_UPLOAD_SUCCESS,
 	VIEW_POST,
-	VIEW_POST_ERR
+	VIEW_POST_ERR,
+	VIEW_ALL_USER,
+	FRIEND_ADDEED_FAIL,
+	FRIEND_ADDEED_SUCCESSS,
+	PROFILE_UPDATED_ERROR,
+	PROFILE_UPDATED_SUCCESSFULLY,
 } from "../actions/types";
 
 const initialState = {
@@ -71,6 +76,28 @@ export default function (state = initialState, action) {
 			return{
 				...state,
 				user:action.payload
+			}
+		case VIEW_ALL_USER:
+				return {
+					...state,
+					isAuthenticated: true,
+					loading: false,
+					user: action.payload.data,
+				};
+		case FRIEND_ADDEED_SUCCESSS:
+			return{
+				...state,
+				isAuthenticated: true,
+				loading: false,
+				user: action.payload.data,
+			};
+		case FRIEND_ADDEED_FAIL:
+		case PROFILE_UPDATED_SUCCESSFULLY:
+			return{
+				...state,
+				isAuthenticated: true,
+				loading: false,
+				user: action.payload.data,
 			}
 		default:
 			return state;

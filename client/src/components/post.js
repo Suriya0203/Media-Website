@@ -32,8 +32,9 @@ export default function Post() {
       position:"relative",
       left:".5%"
     }}>CRETAE POST</Button>
-		<Button  size="large" variant="contained" style={{
+		<Button  size="large" variant="contained" href='/viewpost' style={{
       position:"relative",
+      
       left:"4%"
     }}>VIEW POST</Button>
       </CardActions>

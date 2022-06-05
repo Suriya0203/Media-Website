@@ -9,6 +9,9 @@ const comment=mongoose.model('comment',{
         ref: "user_details",
         //required: true,
      },
+     commentedByName:{
+         type:String
+     },
      comment: {
         type: String,
         required: true,

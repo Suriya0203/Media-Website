@@ -21,6 +21,9 @@
   "@material-ui/icons": "^4.11.3",
   
     
+  "@mojs/core": "^1.3.0",
+  
+    
   "@mui-treasury/components": "^1.10.1",
   
     
@@ -54,6 +57,9 @@
   "axios": "^0.27.2",
   
     
+  "bootstrap": "^5.1.3",
+  
+    
   "cors": "^2.8.5",
   
     
@@ -63,10 +69,16 @@
   "in": "^0.19.0",
   
     
+  "jquery": "^3.6.0",
+  
+    
   "package.json": "^2.0.1",
   
     
   "react": "^18.1.0",
+  
+    
+  "react-animated-heart": "^0.0.7",
   
     
   "react-bootstrap": "^2.4.0",

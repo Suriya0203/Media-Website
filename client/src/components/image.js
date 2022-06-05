@@ -2,7 +2,7 @@ import React,{useEffect,useState} from 'react';
 import {connect} from 'react-redux'
 import { useParams} from 'react-router-dom';
 import ResponsiveAppBar from './Navbar';
-import { Viewpostaction}  from "../actions/auth"
+import { fetchimages}  from "../actions/auth"
 import { Link } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
@@ -11,6 +11,7 @@ import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Collapse from '@mui/material/Collapse';
+import SendIcon from '@mui/icons-material/Send';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -20,7 +21,9 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { TextField } from '@mui/material';
+
+import {AddComment} from '../actions/auth'
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
@@ -33,22 +36,36 @@ const ExpandMore = styled((props) => {
   }));
 
 
-function Viewpost({products,Viewpostaction}){
+function Image({products,fetchimages,AddComment}){
   const params = useParams(); 
   useEffect(()=>{
-    Viewpostaction()
+    fetchimages()
 },[])
 
-const [value, setValue] = useState("");
+
 const [expanded, setExpanded] = React.useState(false);
+const [formData, setFormData] = useState({
+  comment: "",
+  postId:""
+
+});
+
+//console.log(value)
+  const {comment,postId}=formData;
+const Passvalue = async (e) => {
+  e.preventDefault();
+  console.log(formData,'suriya')
+  // useEffect(()=>{
+  AddComment(formData)
+  // },[])
+
+};
 
 const handleExpandClick = () => {
   setExpanded(!expanded);
 };
 if(products){
 return (
-    <div>
-     <ResponsiveAppBar />
     <div>
            {(products.map((contact, id) => (
                   <>
@@ -96,15 +113,31 @@ return (
         <InsertCommentIcon />
       </IconButton>
   </Link>
-  <IconButton aria-label="delete" href={`/deletepost/${contact._id}`}>
-        <DeleteIcon />
+  <TextField   id="outlined-basic" label="Add Comment" size="small" 
+    value={comment}
+    name="comment"
+    onChange={(e) => {
+      setFormData({ ...formData, [e.target.name]: e.target.value,["postId"]: contact._id  });
+              }}
+    
+    style={{
+    height:"-2px",
+    position:"relative",
+    top:"-4px",
+    borderBottom: "none"
+  }} variant="outlined" />
+        <IconButton aria-label="send" onClick={Passvalue}>
+        <SendIcon />
       </IconButton>
+
       <ExpandMore
         expand={expanded}
         onClick={handleExpandClick}
         aria-expanded={expanded}
         aria-label="show more"
       >
+         
+
         <ExpandMoreIcon />
       </ExpandMore>
     </CardActions>
@@ -141,7 +174,7 @@ return (
   </Card><br/>
   </>
                    )))}
-  </div></div>
+  </div>
 );
     }
 }
@@ -155,8 +188,9 @@ const mapStateToProps=state=>{
 
 const mapDispatchToProps=dispatch=>{
   return {
-    Viewpostaction:()=>dispatch(Viewpostaction())
+    fetchimages:()=>dispatch(fetchimages()),
+    AddComment:(formData)=>dispatch(AddComment(formData))
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Viewpost)
+export default connect(mapStateToProps,mapDispatchToProps)(Image)

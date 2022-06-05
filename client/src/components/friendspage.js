@@ -28,7 +28,7 @@ export default function FriendsPage() {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button  size="large" variant="contained" style={{
+        <Button  size="large" variant="contained" href='/add_friends' style={{
       position:"relative",
       left:".5%"
     }}>ADD FRIENDS</Button>

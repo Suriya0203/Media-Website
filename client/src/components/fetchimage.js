@@ -1,8 +1,8 @@
-import React,{useEffect,useState} from 'react';
+import React,{useEffect} from 'react';
 import {connect} from 'react-redux'
 import { useParams} from 'react-router-dom';
 import ResponsiveAppBar from './Navbar';
-import { Viewpostaction}  from "../actions/auth"
+import { fetchimages}  from "../actions/auth"
 import { Link } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import Card from '@mui/material/Card';
@@ -20,7 +20,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import InsertCommentIcon from '@mui/icons-material/InsertComment';
-import DeleteIcon from '@mui/icons-material/Delete';
+
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
@@ -33,13 +33,11 @@ const ExpandMore = styled((props) => {
   }));
 
 
-function Viewpost({products,Viewpostaction}){
+function Image({products,fetchimages}){
   const params = useParams(); 
   useEffect(()=>{
-    Viewpostaction()
+    fetchimages()
 },[])
-
-const [value, setValue] = useState("");
 const [expanded, setExpanded] = React.useState(false);
 
 const handleExpandClick = () => {
@@ -96,9 +94,6 @@ return (
         <InsertCommentIcon />
       </IconButton>
   </Link>
-  <IconButton aria-label="delete" href={`/deletepost/${contact._id}`}>
-        <DeleteIcon />
-      </IconButton>
       <ExpandMore
         expand={expanded}
         onClick={handleExpandClick}
@@ -155,8 +150,8 @@ const mapStateToProps=state=>{
 
 const mapDispatchToProps=dispatch=>{
   return {
-    Viewpostaction:()=>dispatch(Viewpostaction())
+    fetchimages:()=>dispatch(fetchimages())
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Viewpost)
+export default connect(mapStateToProps,mapDispatchToProps)(Image)

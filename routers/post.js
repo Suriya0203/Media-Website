@@ -10,6 +10,7 @@ const { StatusCodes } = require('http-status-codes');
 var Mongoose=require("mongoose")
 const multer=require('multer')
 var auth=require("../middleware/auth");
+const post = require("../model/post")
 //const comment = require("../model/comments");
 let name='1234'
 const Storage=multer.diskStorage({
@@ -180,6 +181,8 @@ router.delete('/removelike',auth,async(req,res)=>{
 router.post('/addcomment', auth,async(req,res)=>{
     try{
     var post=await image.findById(req.body.postId)
+    var user=await user_details.findById(req.user.id)
+    console.log(user.name)
     console.log(post)
     if (post=="null"){
       res.status(404).json({
@@ -190,7 +193,8 @@ router.post('/addcomment', auth,async(req,res)=>{
     var newComment = new comments_data({
       comment: req.body.comment,
       commentedBy: req.user.id,
-      postId:req.body.postid
+      postId:req.body.postId,
+      commentedByName:user.name
     })
     newComment.save().then(result=>{
       res.status(200).json({
@@ -230,18 +234,22 @@ router.get('/viewpost',auth,async(req,res)=>{
   }
 
 })
-router.delete('/deletecomment',auth,async(req,res)=>{
+router.delete('/deletecomment/:id',auth,async(req,res)=>{
+  
+  console.log(req.params.id,"suriya prakash")
   try{
-  var post=await comments_data.findById({_id:req.body.id})
+  var post=await comments_data.findById({_id:req.params.id})
   console.log(post)
   if(post!="null"){
     //res.send(post.commentedBy)
     if(post.commentedBy.toString()==req.user.id.toString()){
-        var del=await comments_data.findByIdAndDelete({_id:req.body.id})
+        var del=await comments_data.findOneAndDelete({_id:req.params.id})
         if(del){
             res.status(200).json({
-              message:"comment deleted succesfully"
+              message:"comment deleted succesfully",
+              data:del
             })
+            console.log(del)
         }
         else{
           res.status(401).json({
@@ -341,7 +349,51 @@ catch(err){
 }
 })
 
+router.get('/allpost',auth,async(req,res)=>{
+  console.log("suriya")
+  try{
+  const data=await image.find({_id : {$ne : req.user.id}})
+    if(data){
+        res.status(200).json({
+          //data:data,
+          data:data
+        })
+    }
+    else{
+        //console.log(err)
+        res.status(404)
+    }}
+    catch(err){
+      res.status(500).json({
+        messsage:"Server error"
+      })
+    }
+})
 
+router.get('/comments/:id',auth,async(req,res)=>{
+  id=req.params.id
+  console.log(id)
+  try{
+  const data=await comments_data.find({postId:id})
+  if(data){
+    res.status(200).json({
+      data:data
+    })
+    console.log(data)
+  }
+  else{
+    res.status(401).json({
+      message:"No post in this ID"
+    })
+  }
+}
+  catch(err){
+    console.log(err)
+    res.status(500).json({
+      message:"Server error"
+    })
+  }
 
+})
 module.exports = router;        
   
