@@ -6,7 +6,14 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import ResponsiveAppBar from './Navbar'
-export default function Post() {
+import { loadUser } from '../actions/auth';
+import { Link, Navigate } from "react-router-dom";
+import {connect} from 'react-redux'
+function Post({isAuthenticated}) {
+  console.log(isAuthenticated)
+  // if(isAuthenticated==false){
+  //   return <Navigate to="/login" />;
+  // }
   return (
 	<div>  
 	<ResponsiveAppBar />
@@ -42,3 +49,14 @@ export default function Post() {
 	</div>
   );
 }
+
+
+const mapStateToProps=state=>{
+  return {
+    isAuthenticated: state.auth.isAuthenticated,
+  
+  }
+}
+
+
+export default connect(mapStateToProps)(Post)

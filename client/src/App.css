@@ -21,7 +21,7 @@ body{
 }
 input[type=text],[type= email],[type= password]{
   border: none;
- 
+
   background-color: whitesmoke;
 }
 .form input {

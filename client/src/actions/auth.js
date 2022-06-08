@@ -37,7 +37,15 @@ import {
 	DELETE_POST_SUCCESS,
 	DELETE_POST_FAILURE,
 	COMMENT_DELETED_SUCCESSFULLY,
-	COMMENT_DELETED_FAILURE
+	COMMENT_DELETED_FAILURE,
+	LIKE_ADDED_SUCCESSFULLY,
+	LIKE_ADDED_FAILURE,
+	REMOVE_LIKE_SUCCESSSFULL,
+	REMOVE_LIKE_FAILURE,
+	EDIT_COMMENT_SUCCESSFULL,
+	EDIT_COMMENT_FAILURE,
+	SEARCH_USER_SUCCESS,
+	SEARCH_USER_FAILURE
 } from "./types";
 import setAuthToken from "../utils/setAuthToken";
 
@@ -156,7 +164,8 @@ export const friends=()=>async(dispatch)=>{
 	}
 }
 
-export const logout = () => (dispatch) => {
+export const logout = () => async(dispatch) => {
+	console.log("logout")
 	localStorage.removeItem("token");
 	console.log('suriya')
 	dispatch({ type: LOGOUT });
@@ -232,6 +241,7 @@ export const profile =
 			});
 		}
 	};
+	
 export const getAlluser =()=>async(dispatch)=>{
 		console.log("suriya")
 		try{
@@ -582,3 +592,118 @@ async (dispatch) => {
 
 
 
+////
+
+export const Addlike =
+( id) =>
+async (dispatch) => {
+	console.log(id,"kavin")
+	console.log("suriya prakash")
+	try {
+		const res = await axios.put(
+			`http://localhost:2000/addlike/${id}`,
+		);
+
+		dispatch({
+			type: LIKE_ADDED_SUCCESSFULLY,
+			payload: res.data,
+		});
+
+
+	} catch (err) {
+
+		
+		console.log(err)
+		
+
+		dispatch({
+			type: LIKE_ADDED_FAILURE,
+		});
+	}
+};
+
+
+
+
+
+/////
+export const RemoveLike =
+( id) =>
+async (dispatch) => {
+	console.log(id,"kavin")
+	console.log("suriya prakash")
+	try {
+		const res = await axios.delete(
+			`http://localhost:2000/removelike/${id}`,
+		);
+
+		dispatch({
+			type: REMOVE_LIKE_SUCCESSSFULL,
+			payload: res.data,
+		});
+
+
+	} catch (err) {
+
+		
+		console.log(err)
+		
+
+		dispatch({
+			type: REMOVE_LIKE_FAILURE,
+		});
+	}
+};
+
+
+
+export const EditComments =
+( formData) =>
+async (dispatch) => {
+	// console.log(id,"kavin")
+	console.log("suriya prakash")
+	try {
+		const res = await axios.put(
+			`http://localhost:2000/editcomment`,
+			formData
+		);
+
+		dispatch({
+			type: EDIT_COMMENT_SUCCESSFULL,
+			payload: res.data,
+		});
+
+
+	} catch (err) {
+
+		
+		console.log(err)
+		
+
+		dispatch({
+			type: EDIT_COMMENT_FAILURE,
+		});
+	}
+};
+
+
+////
+export const SearchUsers =()=>async(dispatch)=>{
+	console.log("suriya")
+	try{
+		const res=await axios.get("http://localhost:2000/alluser")
+		dispatch({
+			type:SEARCH_USER_SUCCESS,
+			payload:res.data
+		})
+		// dispatch(loadUser());
+		// console.log(res.data)
+		return res.data
+	}
+	catch(err){
+		console.log(err)
+		dispatch({
+			type:SEARCH_USER_FAILURE
+		})
+	}
+}

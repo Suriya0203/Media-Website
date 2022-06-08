@@ -63,9 +63,16 @@ const PersonItem = ({ src, name, friendCount,id }) => {
           </div>
         </Item>
         <Item position={'middle'}>
+        <Button className={styles.btn} style={{
+          position:"relative",
+          right:"4%"
+        }} variant={'outlined'}  href={`/addfriendbyid/${id}`} >
+             View
+           </Button>
         <Button className={styles.btn} variant={'outlined'}  href={`/addfriendbyid/${id}/${name}`} >
              Follow
            </Button>
+           
         </Item>
       </Row>
     </Row>

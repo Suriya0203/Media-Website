@@ -1,6 +1,7 @@
-import * as React from 'react';
+import React, {useState,useEffect} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import {connect} from 'react-redux'
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -12,6 +13,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import { getAlluser } from '../actions/auth';
 import { styled, alpha } from '@mui/material/styles';
 import { Link } from "react-router-dom";
 import InputBase from '@mui/material/InputBase';
@@ -74,17 +76,25 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const ResponsiveAppBar = () => {
+const ResponsiveAppBar = ({logout,getAlluser}) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-
+  const [APIData, setAPIData] = useState([])
+  // useEffect(()=>{
+  //   setAPIData()
+  // })
+  // if(setAPIData){
+  //   return <ResponsiveAppBar/>
+  // }
+  console.log(APIData)
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-
+  const onChange = (e) =>
+     setAPIData(e.target.value);
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -92,7 +102,10 @@ const ResponsiveAppBar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
+  const PassValue=()=>{
+    console.log("suriya")
+    
+  }
   return (
     
     <AppBar position="static">
@@ -182,14 +195,22 @@ const ResponsiveAppBar = () => {
             {/* sx={{ my: 2, color: 'white', display: 'block' }} */}
           </Box>
           <Search >
-            <SearchIconWrapper>
+            <SearchIconWrapper  >
               <SearchIcon />
             </SearchIconWrapper>
             <StyledInputBase
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
+              onChange={(e) => onChange(e)}
+             
             />
           </Search>
+          <Button variant="outlined"  href={`/searchuser/${APIData}`} color="error" style={{
+            position:"relative",
+            right:"2%",
+          }}>
+  Go
+</Button>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -218,10 +239,7 @@ const ResponsiveAppBar = () => {
               <MenuItem component="a" href="/account">Account</MenuItem>
               
               <MenuItem component="a" href="/dashboard">Dashbaord</MenuItem>
-              <MenuItem component="a" h><Link onClick={logout} to="/" replace>
-					<i className="fas fa-sign-out-alt"></i>{" "}
-					<span className="hide-sm"> &nbsp;Logout</span>
-				</Link></MenuItem>
+              <MenuItem component="a" href="/logout">Logout</MenuItem>
             </Menu>
           </Box>
         </Toolbar>
@@ -229,4 +247,14 @@ const ResponsiveAppBar = () => {
     </AppBar>
   );
 };
-export default ResponsiveAppBar;
+
+
+const mapDispatchToProps=dispatch=>{
+  return {
+    logout:()=>dispatch(logout()),
+    getAlluser:()=>dispatch(getAlluser())
+
+  }
+}
+
+export default connect(mapDispatchToProps)(ResponsiveAppBar)

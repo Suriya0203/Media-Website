@@ -7,6 +7,7 @@ const { StatusCodes } = require('http-status-codes');
 //const multer = require('multer')
 //const { mutateExecOptions } = require('nodemon/lib/config/load')
 //mongo();
+const fs = require("fs");
 var Mongoose=require("mongoose")
 const multer=require('multer')
 var auth=require("../middleware/auth");
@@ -34,7 +35,7 @@ router.post('/createpost',auth,async(req,res)=>{
             const newImage= new image({
                 name:req.body.name,
                 image:{
-                    data:req.filename,
+                    data:fs.readFileSync("uploads/" + req.file.filename),
                     contentType:'image/jpg' || 'image/png' || 'image/jpeg'
                 },
                 createdBy:req.user.id//req.body.createrid
@@ -43,7 +44,9 @@ router.post('/createpost',auth,async(req,res)=>{
             newImage.save()
             if(newImage){
               res.status(200).json({
-                message:"Post created successfully"
+                message:"Post created successfully",
+                data:newImage
+
               })
             }
             else{
@@ -110,14 +113,14 @@ router.delete('/deletepost/:id',auth,async(req,res)=>{
 
 
 
-router.put('/addlike',auth,async(req,res)=>{
+router.put('/addlike/:id',auth,async(req,res)=>{
     // console.log(req.body.id)
     try{
-    let posts = await image.findById(req.body.id);
+    let posts = await image.findById(req.params.id);
     console.log(posts)
     if (!posts){
       res.status(404).json({
-        message:`No post with id${req.body.id}`
+        message:`No post with id${req.params.id}`
       })
     }
     // throw new NotFoundError(`No post with id${req.body.id}`);
@@ -130,7 +133,7 @@ router.put('/addlike',auth,async(req,res)=>{
     else{
   
     posts = await image.findByIdAndUpdate(
-      req.body.id,
+      req.params.id,
       {
         $push: { likes: req.user.id },
       },
@@ -144,20 +147,20 @@ router.put('/addlike',auth,async(req,res)=>{
   })
 }
 })
-router.delete('/removelike',auth,async(req,res)=>{
+router.delete('/removelike/:id',auth,async(req,res)=>{
     try{
-    let posts = await image.findById(req.body.id);
+    let posts = await image.findById(req.params.id);
     console.log(posts)
     if (!posts){
       res.status(404).json({
-        message:`No post with id${req.body.id}`
+        message:`No post with id${req.params.id}`
       })
     }
     // throw new NotFoundError(`No post with id${req.body.id}`);
     //console.log(posts.likes)
     else if ( posts.likes.includes(req.user.id.toString())){
       posts = await image.findByIdAndUpdate(
-        req.body.id,
+        req.params.id,
         {
           $pull: { likes: req.user.id },
         },
@@ -271,6 +274,9 @@ router.delete('/deletecomment/:id',auth,async(req,res)=>{
   }
 })
 router.put('/editcomment',auth,async(req,res)=>{
+
+  console.log(req.body.id)
+  console.log(req.body.comment)
   try{
   var post=await comments_data.findById({_id:req.body.id})
   console.log(post)

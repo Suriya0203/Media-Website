@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Link, Navigate, Redirect } from "react-router-dom";
 import { register } from "../actions/auth";
 import PropTypes from "prop-types";
-
+import ResponsiveAppBar from "./Navbar"
 const Register = ({register, isAuthenticated }) => {
 	const [formData, setFormData] = useState({
 		name: "",
@@ -32,6 +32,8 @@ const Register = ({register, isAuthenticated }) => {
 	}
 
 	return (
+		<div>
+		<ResponsiveAppBar />
 		<div className="register-form">
 			<br />
 			<h1 className="heading">Sign Up</h1>
@@ -47,6 +49,11 @@ const Register = ({register, isAuthenticated }) => {
 						name="name"
 						value={name}
 						onChange={(e) => onChange(e)}
+						style={{
+							border: "0",
+							borderBottom: "2px solid black",
+							outline: "0"
+						}}
 					/>
 				</div>
 				<div className="form-group">
@@ -56,6 +63,11 @@ const Register = ({register, isAuthenticated }) => {
 						name="email"
 						value={email}
 						onChange={(e) => onChange(e)}
+						style={{
+							border: "0",
+							borderBottom: "2px solid black",
+							outline: "0"
+						}}
 					/>
 				</div>
 				<div className="form-group">
@@ -66,6 +78,11 @@ const Register = ({register, isAuthenticated }) => {
 						minLength="6"
 						value={password}
 						onChange={(e) => onChange(e)}
+						style={{
+							border: "0",
+							borderBottom: "2px solid black",
+							outline: "0"
+						}}
 					/>
 				</div>
 				<div className="form-group">
@@ -76,6 +93,11 @@ const Register = ({register, isAuthenticated }) => {
 						minLength="6"
 						value={password2}
 						onChange={(e) => onChange(e)}
+						style={{
+							border: "0",
+							borderBottom: "2px solid black",
+							outline: "0"
+						}}
 					/>
 				</div>
 				<input type="submit" className="btn btn-primary" value="Register" />
@@ -83,7 +105,7 @@ const Register = ({register, isAuthenticated }) => {
 			<p className="link">
 				Already have an account? <Link to="/login">Sign In</Link>
 			</p>
-		</div>
+		</div></div>
 	);
 };
 

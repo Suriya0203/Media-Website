@@ -20,7 +20,7 @@ import {
 
 const initialState = {
 	token: localStorage.getItem("token"),
-	isAuthenticated: null,
+	isAuthenticated: false,
 	loading: true,
 	user: null,
 };
@@ -93,6 +93,7 @@ export default function (state = initialState, action) {
 			};
 		case FRIEND_ADDEED_FAIL:
 		case PROFILE_UPDATED_SUCCESSFULLY:
+			alert(action.payload.message)
 			return{
 				...state,
 				isAuthenticated: true,

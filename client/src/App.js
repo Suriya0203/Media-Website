@@ -26,8 +26,10 @@ import UserContainer from './components/check'
 import Image from './components/image'
 import DeletePostByid from "./components/deletepost";
 import DeleteCommentById from "./components/Deletecomment";
-
-
+import EditComment from "./components/EditComments";
+import Logout_auth from "./components/logout"
+import SearchUser from "./components/search";
+import ProfileCardDemo from './components/ViewUser'
 if (localStorage.token) {
 
 	setAuthToken(localStorage.token);
@@ -41,8 +43,10 @@ const App = ()=>{
         <Routes>
             <Route exact path="/login" element={ <Login/> } />
             <Route exact path="/" element={ <Login/> } />
+            <Route exact path="/logout" element={ <Logout_auth/> } />
             <Route exact path="/register" element={ <Register/> } />
             <Route exact path="/dashboard" element={ <Dashboard/> } />
+            {/* <Route exact path='/dashboard' element={<PrivateRoute component={Dashboard}/>}/> */}
             <Route exact path="/profile" element={ <Profile/> } />
             <Route exact path="/navbar" element={ <ResponsiveAppBar/> } />
             <Route exact path="/friends" element={ <FriendsPage/> } />
@@ -62,7 +66,11 @@ const App = ()=>{
               <Route exact path="/deletepost/:postId" element={ <DeletePostByid
             /> } />
             <Route exact path="/deletecomment/:userId" element={ <DeleteCommentById/> } />
-          </Routes>
+            <Route exact path="/editcomment/:userId" element={ <EditComment/> } />
+            <Route exact path="/searchuser/:searchname" element={ <SearchUser/> } />
+            <Route exact path="/viewuser" element={ <ProfileCardDemo/> } />
+
+            </Routes>
         </Router>
     )};
 

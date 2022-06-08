@@ -32,6 +32,7 @@ import {
           loading: false,
           items: action.payload
         };
+
         case DELETE_POST_SUCCESS:
           // All done: set loading "false".
           // Also, replace the items with the ones from the server

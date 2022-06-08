@@ -3,7 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { login } from "../actions/auth";
-
+import ResponsiveAppBar from "./Navbar"
 
 const Login = ({ login, isAuthenticated }) => {
 	const [formData, setFormData] = useState({
@@ -28,6 +28,8 @@ const Login = ({ login, isAuthenticated }) => {
 	}
 
 	return (
+		<div>
+		<ResponsiveAppBar />
 		<div className="login-form">
 			<br />
 			<h1 className="heading">Sign In</h1>
@@ -45,6 +47,11 @@ const Login = ({ login, isAuthenticated }) => {
 						value={email}
 						onChange={(e) => onChange(e)}
 						required
+						style={{
+							border: "0",
+							borderBottom: "2px solid black",
+							outline: "0"
+						}}
 					/>
 				</div>
 				<div className="form-group">
@@ -56,6 +63,11 @@ const Login = ({ login, isAuthenticated }) => {
 						value={password}
 						onChange={(e) => onChange(e)}
 						required
+						style={{
+							border: "0",
+							borderBottom: "2px solid black",
+							outline: "0"
+						}}
 					/>
 				</div>
 				<input type="submit" className="bttttn" value="Login" />
@@ -63,7 +75,7 @@ const Login = ({ login, isAuthenticated }) => {
 			<p className="link">
 				Don't have an account? <Link to="/register">Sign Up</Link>
 			</p>
-		</div>
+		</div></div>
 	);
 };
 

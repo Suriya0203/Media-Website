@@ -3,6 +3,10 @@ import {connect} from 'react-redux'
 import { useParams} from 'react-router-dom';
 import {fetchcomments} from '../actions/auth'
 import ResponsiveAppBar from './Navbar';
+import {EditComment} from '../actions/auth'
+
+
+
 function Comments({userData,fetchcomments,user}){
   const params = useParams();
   const id=params.id
@@ -10,6 +14,7 @@ function Comments({userData,fetchcomments,user}){
   useEffect(()=>{
     fetchcomments(id)
 },[])
+
 if(userData){
   return(
   <div>
@@ -87,7 +92,8 @@ const mapStateToProps=state=>{
 
 const mapDispatchToProps=dispatch=>{
   return {
-    fetchcomments:(id)=>dispatch(fetchcomments(id))
+    fetchcomments:(id)=>dispatch(fetchcomments(id)),
+    // EditComment:(id)=>dispatch(EditComment(id))
   }
 }
 
