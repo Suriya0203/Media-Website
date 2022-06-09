@@ -18,7 +18,9 @@ const post=mongoose.model('post',{
     likes:{
         type:[String]
     },
-
+    createdByName:{
+        type:String
+    },
     user: { type: mongoose.Schema.ObjectId, ref: 'User_details' }
 
 })

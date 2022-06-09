@@ -18,7 +18,9 @@ import {
     REMOVE_LIKE_FAILURE,
     REMOVE_LIKE_SUCCESSSFULL,
     EDIT_COMMENT_FAILURE,
-    EDIT_COMMENT_SUCCESSFULL
+    EDIT_COMMENT_SUCCESSFULL,
+    VIEW_USER_PROFILE_SUCCESSFULLY,
+    VIEW_USER_PROFILE_FAILURE
   } from '../actions/types';
   
   const initialState = {
@@ -55,7 +57,17 @@ import {
             loading: false,
             items: action.payload
           };
+
+          case VIEW_USER_PROFILE_SUCCESSFULLY:
+            // All done: set loading "false".
+            // Also, replace the items with the ones from the server
+            return {
+              ...state,
+              loading: false,
+              items: action.payload
+            };
         case EDIT_COMMENT_FAILURE: 
+        case VIEW_USER_PROFILE_FAILURE:
         case DELETE_POST_SUCCESS:
           // All done: set loading "false".
           // Also, replace the items with the ones from the server

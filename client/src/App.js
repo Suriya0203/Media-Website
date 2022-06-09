@@ -29,7 +29,7 @@ import DeleteCommentById from "./components/Deletecomment";
 import EditComment from "./components/EditComments";
 import Logout_auth from "./components/logout"
 import SearchUser from "./components/search";
-import ProfileCardDemo from './components/ViewUser'
+import ViewUser from './components/ViewUser'
 if (localStorage.token) {
 
 	setAuthToken(localStorage.token);
@@ -68,7 +68,7 @@ const App = ()=>{
             <Route exact path="/deletecomment/:userId" element={ <DeleteCommentById/> } />
             <Route exact path="/editcomment/:userId" element={ <EditComment/> } />
             <Route exact path="/searchuser/:searchname" element={ <SearchUser/> } />
-            <Route exact path="/viewuser" element={ <ProfileCardDemo/> } />
+            <Route exact path="/viewuser/:id" element={ <ViewUser/> } />
 
             </Routes>
         </Router>

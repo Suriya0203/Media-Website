@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useEffect} from 'react';
+import {connect} from 'react-redux'
 import cx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -8,7 +9,9 @@ import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import { useFadedShadowStyles } from '@mui-treasury/styles/shadow/faded';
 import { useGutterBorderedGridStyles } from '@mui-treasury/styles/grid/gutterBordered';
-
+import { ViewUserprofile } from '../actions/auth';
+import { useParams } from 'react-router-dom';
+import ResponsiveAppBar from "./Navbar"
 const useStyles = makeStyles(({ palette }) => ({
   card: {
     borderRadius: 12,
@@ -48,33 +51,61 @@ const useStyles = makeStyles(({ palette }) => ({
   },
 }));
 
-export const ProfileCardDemo = React.memo(function ProfileCard() {
+function ViewUser({ViewUserprofile,userData}){
   const styles = useStyles();
+  const params=useParams()
   const shadowStyles = useFadedShadowStyles();
+console.log(params.id)
+useEffect(()=>{
+  ViewUserprofile(params.id)
+},[])
+
+
+
   const borderedGridStyles = useGutterBorderedGridStyles({
     borderColor: 'rgba(0, 0, 0, 0.08)',
     height: '50%',
   });
+  console.log(userData)
+  if(userData){
   return (
+    // <div> //  {(userData.map((contact, id) => ( 
+      
+      
+      <><ResponsiveAppBar /><br/>
     <Card className={cx(styles.card, shadowStyles.root)}>
       <CardContent>
         <Avatar className={styles.avatar} src={'https://i.pravatar.cc/300'} />
-        <h3 className={styles.heading}>Alan Podemski</h3>
-        <span className={styles.subheader}>Poland</span>
+        <h3 className={styles.heading}>{userData.name}</h3>
+        <span className={styles.subheader}>India</span>
       </CardContent>
       <Divider light />
       <Box display={'flex'}>
         <Box p={2} flex={'auto'} className={borderedGridStyles.item}>
           <p className={styles.statLabel}>Followers</p>
-          <p className={styles.statValue}>6941</p>
+          <p className={styles.statValue}>5</p>
         </Box>
         <Box p={2} flex={'auto'} className={borderedGridStyles.item}>
           <p className={styles.statLabel}>Following</p>
-          <p className={styles.statValue}>12</p>
+          <p className={styles.statValue}>5</p>
         </Box>
       </Box>
     </Card>
-  );
-});
+</>
+  )}
+}
 
-export default ProfileCardDemo
+const mapStateToProps=state=>{
+  return {
+      userData:state.post.items,
+  }
+}
+
+const mapDispatchToProps=dispatch=>{
+  return {
+    ViewUserprofile:(id)=>dispatch(ViewUserprofile(id))
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(ViewUser)
+// export default ViewUser

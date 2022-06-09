@@ -45,7 +45,9 @@ import {
 	EDIT_COMMENT_SUCCESSFULL,
 	EDIT_COMMENT_FAILURE,
 	SEARCH_USER_SUCCESS,
-	SEARCH_USER_FAILURE
+	SEARCH_USER_FAILURE,
+	VIEW_USER_PROFILE_SUCCESSFULLY,
+	VIEW_USER_PROFILE_FAILURE
 } from "./types";
 import setAuthToken from "../utils/setAuthToken";
 
@@ -707,3 +709,37 @@ export const SearchUsers =()=>async(dispatch)=>{
 		})
 	}
 }
+
+
+///
+
+
+
+export const ViewUserprofile =
+( id) =>
+async (dispatch) => {
+	console.log(id,"kavin")
+	console.log("suriya prakash")
+	try {
+		const res = await axios.get(
+			`http://localhost:2000/search/${id}`,
+		);
+
+		dispatch({
+			type: VIEW_USER_PROFILE_SUCCESSFULLY,
+			payload: res.data,
+		});
+
+
+	} catch (err) {
+
+		
+		console.log(err)
+		
+
+		dispatch({
+			type: VIEW_USER_PROFILE_FAILURE,
+		});
+	}
+};
+

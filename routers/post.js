@@ -27,19 +27,23 @@ const upload=multer({
 router.post('/createpost',auth,async(req,res)=>{
   //console.log(req.user)  
   try{
+    var user=await user_details.findById(req.user.id)
    upload(req,res,(err)=>{
         if (err){
             console.log(err)
         }
         else{
+          
+          console.log(user)
+          console.log(user.name)
             const newImage= new image({
                 name:req.body.name,
                 image:{
                     data:fs.readFileSync("uploads/" + req.file.filename),
                     contentType:'image/jpg' || 'image/png' || 'image/jpeg'
                 },
-                createdBy:req.user.id//req.body.createrid
-                //user:getUser()
+                createdBy:req.user.id,
+                createdByName:user.name
             })
             newImage.save()
             if(newImage){
