@@ -9,11 +9,15 @@ import ResponsiveAppBar from './Navbar'
 import { loadUser } from '../actions/auth';
 import { Link, Navigate } from "react-router-dom";
 import {connect} from 'react-redux'
-function Post({isAuthenticated}) {
-  console.log(isAuthenticated)
+// import { Navigate } from "react-router-dom";
+function Post({user}) {
+ 
   // if(isAuthenticated==false){
   //   return <Navigate to="/login" />;
   // }
+  if(!user){
+    return <Navigate to="/login" />
+  }
   return (
 	<div>  
 	<ResponsiveAppBar />
@@ -53,7 +57,7 @@ function Post({isAuthenticated}) {
 
 const mapStateToProps=state=>{
   return {
-    isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.token,
   
   }
 }

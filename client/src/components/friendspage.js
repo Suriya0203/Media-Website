@@ -6,7 +6,12 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import ResponsiveAppBar from './Navbar'
-export default function FriendsPage() {
+import {connect} from 'react-redux'
+import { Navigate } from "react-router-dom";
+function FriendsPage({user}) {
+  if(!user){
+    return <Navigate to="/login" />
+  }
   return (
 	<div>  
 	<ResponsiveAppBar />
@@ -41,3 +46,10 @@ export default function FriendsPage() {
 	</div>
   );
 }
+const mapStateToProps=state=>{
+  return {
+
+      user:state.auth.token
+    }
+}
+export default connect(mapStateToProps)(FriendsPage)

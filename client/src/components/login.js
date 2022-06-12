@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 import { login } from "../actions/auth";
 import ResponsiveAppBar from "./Navbar"
 
-const Login = ({ login, isAuthenticated }) => {
+const Login = ({ login, user }) => {
 	const [formData, setFormData] = useState({
 		email: "",
 		password: "",
@@ -23,9 +23,9 @@ const Login = ({ login, isAuthenticated }) => {
 	};
 
 	// Redirect if logged in
-	if (isAuthenticated) {
-		return <Navigate to="/dashboard" />;
-	}
+	if (user===null) {
+		
+	
 
 	return (
 		<div>
@@ -76,7 +76,10 @@ const Login = ({ login, isAuthenticated }) => {
 				Don't have an account? <Link to="/register">Sign Up</Link>
 			</p>
 		</div></div>
-	);
+	);}
+	else{
+		return <Navigate to="/dashboard" />;
+	}
 };
 
 Login.propTypes = {
@@ -85,7 +88,7 @@ Login.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-	isAuthenticated: state.auth.isAuthenticated,
+	user: state.auth.user,
 });
 
 export default connect(mapStateToProps, { login })(Login);

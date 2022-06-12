@@ -162,7 +162,7 @@ catch(err){
 router.get('/alluser',auth,async(req,res)=>{
   console.log("suriya")
   try{
-  const data=await user_details.find({_id : {$ne : req.user.id}})
+  const data=await friend.find({userId : {$ne : req.user.id}})
     if(data){
         res.status(200).json({
           //data:data,

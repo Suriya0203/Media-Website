@@ -236,7 +236,7 @@ const ResponsiveAppBar = ({logout,getAlluser}) => {
               onClose={handleCloseUserMenu}
             >
               <MenuItem component="a" href="/profile">Profile</MenuItem>
-              <MenuItem component="a" href="/account">Account</MenuItem>
+              <MenuItem component="a" href="/changepassword">Account</MenuItem>
               
               <MenuItem component="a" href="/dashboard">Dashbaord</MenuItem>
               <MenuItem component="a" href="/logout">Logout</MenuItem>

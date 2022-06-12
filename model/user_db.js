@@ -24,7 +24,12 @@ const user_deatils=mongoose.model('user_details',{
 	},
 	friends:{
 		type:[String]
-	}
+	},
+	image:{
+        //type:String
+        data:Buffer,
+        contentType:String
+    },
 
 })
 module.exports=user_deatils

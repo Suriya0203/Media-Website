@@ -27,6 +27,7 @@ import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
 import { TextField } from '@mui/material';
 import {Addlike} from '../actions/auth' 
 import {AddComment} from '../actions/auth'
+import { Navigate } from "react-router-dom";
 import { RemoveLike } from '../actions/auth';
 const ExpandMore = styled((props) => {
     const { expand, ...other } = props;
@@ -40,7 +41,7 @@ const ExpandMore = styled((props) => {
   }));
 
 
-  function Viewpost({products,Viewpostaction,AddComment,Addlike,RemoveLike}){
+  function Viewpost({products,Viewpostaction,AddComment,Addlike,RemoveLike,user}){
   const params = useParams(); 
   useEffect(()=>{
     Viewpostaction()
@@ -68,6 +69,9 @@ console.log(products)
 const handleExpandClick = () => {
   setExpanded(!expanded);
 };
+if(!user){
+  return <Navigate to="/login" />
+}
 if(products){
 
   return (
@@ -207,7 +211,8 @@ const mapStateToProps=state=>{
   return {
     products: state.image.items.data,
     loading: state.image.loading,
-    error: state.image.error
+    error: state.image.error,
+    user:state.auth.token
   }
 }
 

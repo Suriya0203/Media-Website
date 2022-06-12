@@ -62,6 +62,44 @@ router.post('/createpost',auth,async(req,res)=>{
       console.log(err.message)
     }
 })
+
+router.post('/editprofile2',auth,async(req,res)=>{
+  try{
+    upload(req,res,(err)=>{
+        if (err){
+            console.log(err)
+        }
+        else{
+          
+          const data=user_details.findOneAndUpdate(req.user.id,
+            {
+              $set:{
+                image:{
+                  data:fs.readFileSync("uploads/" + req.file.filename),
+                  contentType:'image/jpg' || 'image/png' || 'image/jpeg'
+              },}
+            }
+        
+          )
+          console.log(data)
+          if(data){
+            res.json({
+              message:'success',
+              result:data
+            })
+          }
+            else{
+              res.status(401)
+            }
+        }
+    })
+
+}
+catch(err){
+  console.log(err)
+}})
+
+
 router.get('/getpost/:id',auth,async(req,res)=>{
     id=req.params.id
     //console.log(req.auth.email)

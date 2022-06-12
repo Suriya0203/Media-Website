@@ -1,6 +1,6 @@
 import React,{useEffect} from 'react';
 import {connect} from 'react-redux'
-import { useParams} from 'react-router-dom';
+import { useParams,Navigate} from 'react-router-dom';
 import {fetchcomments} from '../actions/auth'
 import ResponsiveAppBar from './Navbar';
 import {EditComment} from '../actions/auth'
@@ -14,7 +14,9 @@ function Comments({userData,fetchcomments,user}){
   useEffect(()=>{
     fetchcomments(id)
 },[])
-
+if(!user){
+  return <Navigate to="/login" />
+}
 if(userData){
   return(
   <div>
@@ -86,7 +88,7 @@ if(userData){
 const mapStateToProps=state=>{
   return {
       userData:state.post.items.data,
-      user:state.auth.user
+      user:state.auth.token
   }
 }
 

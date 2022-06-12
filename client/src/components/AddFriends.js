@@ -111,7 +111,7 @@ const useStyles = makeStyles(() => ({
 
 
 /////
-function UserContainer({userData,fetchProducts}){
+function UserContainer({user,userData,fetchProducts}){
     
     useEffect(()=>{
         fetchProducts()
@@ -119,6 +119,9 @@ function UserContainer({userData,fetchProducts}){
     console.log(userData)
     // React.memo(function SocialCard() {
           const styles = useStyles();
+          if(!user){
+            return <Navigate to="/login" />
+          }
            
             if (userData){
           
@@ -145,7 +148,7 @@ function UserContainer({userData,fetchProducts}){
                 <Divider variant={'middle'} className={styles.divider} />
                 {(userData.map((contact, id) => (
                   <>
-                    <PersonItem name={contact.name} id={contact._id}friendCount={6} src={'https://i.pravatar.cc/300?img=10'} />
+                    <PersonItem name={contact.friendName} id={contact._id}friendCount={6} src={'https://i.pravatar.cc/300?img=10'} />
                     <Divider variant={'middle'} className={styles.divider} />
                     </>
                    )))}
@@ -160,7 +163,8 @@ function UserContainer({userData,fetchProducts}){
 const mapStateToProps=state=>{
     return {
         userData:state.post.items.data,
-    }
+        user:state.auth.token
+      }
 }
 
 const mapDispatchToProps=dispatch=>{

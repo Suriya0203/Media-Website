@@ -16,6 +16,8 @@ import {
 	FRIEND_ADDEED_SUCCESSS,
 	PROFILE_UPDATED_ERROR,
 	PROFILE_UPDATED_SUCCESSFULLY,
+	PASSWORD_CHANGED_SUCCESSFULLY,
+	PASSWORD_CHANGED_FAILURE,
 } from "../actions/types";
 
 const initialState = {
@@ -39,6 +41,7 @@ export default function (state = initialState, action) {
 		case REGISTER_SUCCESS:
 		case LOGIN_SUCCESS:
 			localStorage.setItem("token", payload.token);
+			window.location.replace('/dashboard')
 			return {
 				...state,
 				...payload,
@@ -63,7 +66,17 @@ export default function (state = initialState, action) {
 				loading: false,
 				user:action.payload
 			};
+		case PASSWORD_CHANGED_SUCCESSFULLY:
+		alert("Passowrd changed successfully")		
+		return{
+					...state,
+					isAuthenticated: true,
+					loading: false,
+					user:action.payload
+				};
+		case PASSWORD_CHANGED_FAILURE:
 		case IMAGE_UPLOAD_SUCCESS:
+			alert("post created successfully")
 			return{
 				...state,
 				isAuthenticated: true,

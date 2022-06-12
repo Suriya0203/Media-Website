@@ -6,7 +6,8 @@ import { Navigate } from "react-router-dom";
 import ResponsiveAppBar from "./Navbar"
 import { profile } from "../actions/auth";
 //import "./dashboard.css"
-const Profile = ({profile, isAuthenticated }) => {
+// import { Navigate } from "react-router-dom";
+const Profile = ({profile, user }) => {
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
@@ -24,6 +25,9 @@ const Profile = ({profile, isAuthenticated }) => {
 		profile({ name, email, phone });
 		}
 	// if(isAuthenticated){
+		if(!user){
+			return <Navigate to="/login" />
+		  }
 	return (
 		<div>
 		<ResponsiveAppBar />
@@ -159,7 +163,7 @@ Profile.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-	isAuthenticated: state.auth.isAuthenticated,
+	user: state.auth.token,
 });
 
 export default connect(mapStateToProps, { profile })(Profile);

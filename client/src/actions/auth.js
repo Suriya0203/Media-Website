@@ -47,7 +47,9 @@ import {
 	SEARCH_USER_SUCCESS,
 	SEARCH_USER_FAILURE,
 	VIEW_USER_PROFILE_SUCCESSFULLY,
-	VIEW_USER_PROFILE_FAILURE
+	VIEW_USER_PROFILE_FAILURE,
+	PASSWORD_CHANGED_SUCCESSFULLY,
+	PASSWORD_CHANGED_FAILURE
 } from "./types";
 import setAuthToken from "../utils/setAuthToken";
 
@@ -115,7 +117,7 @@ export const login = (email, password) => async (dispatch) => {
 			"Content-Type": "application/json",
 		},
 	};
-
+	console.log(email)
 	const body = JSON.stringify({ email, password });
 
 	try {
@@ -129,7 +131,7 @@ export const login = (email, password) => async (dispatch) => {
 			type: LOGIN_SUCCESS,
 			payload: res.data,
 		});
-
+		
 		dispatch(loadUser());
 	} catch (err) {
 		const errors = err.response.data.errors;
@@ -222,7 +224,7 @@ export const profile =
 
 		try {
 			const res = await axios.post(
-				"http://localhost:2000/editprofile",
+				"http://localhost:2000/editprofile2",
 				body,
 				config
 			);
@@ -243,7 +245,42 @@ export const profile =
 			});
 		}
 	};
+
 	
+export const profile2 =
+(formdata) =>
+async (dispatch) => {
+	// const config = {
+	// 	headers: {
+	// 		"Content-Type": "application/json",
+	// 	},
+	// };
+
+	// const body = JSON.stringify({ name, email, phone });
+
+	try {
+		const res = await axios.post(
+			"http://localhost:2000/editprofile2",
+			formdata
+		);
+
+		dispatch({
+			type: PROFILE_UPDATED_SUCCESSFULLY,
+			payload: res.data,
+		});
+
+	} catch (err) {
+
+		
+		console.log(err)
+		
+
+		dispatch({
+			type: PROFILE_UPDATED_ERROR,
+		});
+	}
+};
+
 export const getAlluser =()=>async(dispatch)=>{
 		console.log("suriya")
 		try{
@@ -254,6 +291,7 @@ export const getAlluser =()=>async(dispatch)=>{
 			})
 			// dispatch(loadUser());
 			// console.log(res.data)
+			dispatch(loadUser());
 			return res.data
 		}
 		catch(err){
@@ -739,6 +777,40 @@ async (dispatch) => {
 
 		dispatch({
 			type: VIEW_USER_PROFILE_FAILURE,
+		});
+	}
+};
+
+/////
+
+
+
+export const ChangePassword_action =
+( formData) =>
+async (dispatch) => {
+	// console.log(id,"kavin")
+	console.log("suriya prakash")
+	try {
+		const res = await axios.post(
+			`http://localhost:2000/changepassword`,
+			formData
+		);
+
+		dispatch({
+			type: PASSWORD_CHANGED_SUCCESSFULLY,
+			payload: res.data,
+		});
+
+
+	} catch (err) {
+
+		
+		console.log(err)
+		
+
+		dispatch({
+			type: PASSWORD_CHANGED_FAILURE,
+			payload:err
 		});
 	}
 };

@@ -12,6 +12,7 @@ import { useGutterBorderedGridStyles } from '@mui-treasury/styles/grid/gutterBor
 import { ViewUserprofile } from '../actions/auth';
 import { useParams } from 'react-router-dom';
 import ResponsiveAppBar from "./Navbar"
+import { Navigate } from "react-router-dom";
 const useStyles = makeStyles(({ palette }) => ({
   card: {
     borderRadius: 12,
@@ -51,7 +52,7 @@ const useStyles = makeStyles(({ palette }) => ({
   },
 }));
 
-function ViewUser({ViewUserprofile,userData}){
+function ViewUser({ViewUserprofile,userData,user}){
   const styles = useStyles();
   const params=useParams()
   const shadowStyles = useFadedShadowStyles();
@@ -67,6 +68,9 @@ useEffect(()=>{
     height: '50%',
   });
   console.log(userData)
+  if(!user){
+    return <Navigate to="/login" />
+  }
   if(userData){
   return (
     // <div> //  {(userData.map((contact, id) => ( 
@@ -98,6 +102,7 @@ useEffect(()=>{
 const mapStateToProps=state=>{
   return {
       userData:state.post.items,
+      user:state.auth.token
   }
 }
 

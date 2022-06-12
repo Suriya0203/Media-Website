@@ -5,7 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { TextField, Button } from '@material-ui/core';
 import {Imageupload} from '../actions/auth'
 import ResponsiveAppBar from "./Navbar"
-const Createpost = () => {
+import {connect} from 'react-redux'
+import { Navigate } from "react-router-dom";
+const Createpost = ({user}) => {
 
     const [post, setPost] = useState()
     const [caption, setCaption] = useState("")
@@ -33,6 +35,12 @@ var url = 'http://localhost:2000/createpost';
         dispatch(Imageupload(formdata))
 
     }
+    if(!user){
+        return <Navigate to="/login" />
+      }
+    // if (user===null){
+    //     return <Navigate to="/login" />
+    //   }
   return (
     <div>
         <ResponsiveAppBar />
@@ -77,4 +85,12 @@ var url = 'http://localhost:2000/createpost';
     </div>
   )
 }
-export default Createpost
+
+
+const mapStateToProps=state=>{
+    return {
+        user:state.auth.token
+      }
+}
+
+export default connect(mapStateToProps)(Createpost)

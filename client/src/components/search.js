@@ -115,7 +115,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-function SearchUser({userData,SearchUsers}){
+function SearchUser({userData,SearchUsers,user}){
     
     const params=useParams()
     const query=params.searchname
@@ -129,6 +129,9 @@ function SearchUser({userData,SearchUsers}){
   // }
   const styles = useStyles(); 
     console.log(userData)
+    if(!user){
+			return <Navigate to="/login" />
+		  }
     if (userData){
     return (
 
@@ -199,6 +202,7 @@ function SearchUser({userData,SearchUsers}){
 const mapStateToProps=state=>{
     return {
         userData:state.search.user.data,
+        user:state.auth.token
     }
 }
 

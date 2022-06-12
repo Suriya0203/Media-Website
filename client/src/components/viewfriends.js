@@ -106,7 +106,7 @@ const useStyles = makeStyles(() => ({
 
 
 /////
-function ViewFriendsdetails({userData,fetchFriendsdetails}){
+function ViewFriendsdetails({userData,fetchFriendsdetails,user}){
     
     useEffect(()=>{
         fetchFriendsdetails()
@@ -114,7 +114,9 @@ function ViewFriendsdetails({userData,fetchFriendsdetails}){
     console.log(userData)
     // React.memo(function SocialCard() {
           const styles = useStyles();
-           
+          if(!user){
+            return <Navigate to="/login" />
+          }
             if (userData){
           
             //   console.log(post.data,12345)
@@ -155,7 +157,8 @@ function ViewFriendsdetails({userData,fetchFriendsdetails}){
 const mapStateToProps=state=>{
     return {
         userData:state.post.items.data,
-    }
+        user:state.auth.token
+      }
 }
 
 const mapDispatchToProps=dispatch=>{
