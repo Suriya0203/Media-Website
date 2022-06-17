@@ -102,6 +102,7 @@ catch(err){
 
 router.get('/getpost/:id',auth,async(req,res)=>{
     id=req.params.id
+    console.log(id)
     //console.log(req.auth.email)
     try{
     const data=await image.findById(id)

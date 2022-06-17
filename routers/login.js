@@ -18,28 +18,30 @@ router.post(
 	],
 	async (req, res) => {
 		const errors = validationResult(req);
+		console.log(errors)
 		if (!errors.isEmpty()) {
 			return res.status(400).json({ errors: errors.array() });
 		}
-
+	
 		const { email, password } = req.body;
-
+		console.log("suriya")
 		try {
 			// See if user exists
 			let user = await User.findOne({ email });
 
 			if (!user) {
 				return res
-					.status(400)
-					.json({ errors: [{ msg: "Invalid Credentials" }] });
+					.status(401)
+					.json({ msg: "Invalid Credentials"});
 			}
 
 			const isMatch = await bcrypt.compare(password, user.password);
-
+			console.log(isMatch)
 			if (!isMatch) {
+				console.log(1234)
 				return res
 					.status(400)
-					.json({ errors: [{ msg: "Invalid Credentials" }] });
+					.json({ msg: "Invalid Credentials"});
 			}
 
 			//Return jsonwebtoken

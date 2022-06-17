@@ -24,8 +24,12 @@ function AdduserById(dispatch) {
   //   }
     //cnsole.log()
     dispatch=useDispatch()
+    useEffect(()=>{
+      dispatch(AddfriendByid(params.userId,params.name))
+  },[])
+   
     if(params.userId){
-    dispatch(AddfriendByid(params.userId,params.name))}
+    }
     return( 
         <div>
           <ResponsiveAppBar/>

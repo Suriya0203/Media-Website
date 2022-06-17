@@ -39,18 +39,31 @@ export default function (state = initialState, action) {
 				user: payload,
 			};
 		case REGISTER_SUCCESS:
+		
+			return{
+				...state,
+				isAuthenticated: true,
+				loading: false,
+				user:action.payload
+			};
 		case LOGIN_SUCCESS:
 			localStorage.setItem("token", payload.token);
-			window.location.replace('/dashboard')
+			
 			return {
 				...state,
 				...payload,
 				isAuthenticated: true,
 				loading: false,
 			};
+			
 		case REGISTER_FAIL:
 		case AUTH_ERROR:
 		case LOGIN_FAIL:
+			alert(action.payload.msg)
+			return {
+				...state,
+				...payload,
+			};
 		case LOGOUT:
 			localStorage.removeItem("token");
 			return {

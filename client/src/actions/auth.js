@@ -49,7 +49,10 @@ import {
 	VIEW_USER_PROFILE_SUCCESSFULLY,
 	VIEW_USER_PROFILE_FAILURE,
 	PASSWORD_CHANGED_SUCCESSFULLY,
-	PASSWORD_CHANGED_FAILURE
+	PASSWORD_CHANGED_FAILURE,
+	GET_POST_FAILURE,
+	GET_POST_SUCCESS
+	
 } from "./types";
 import setAuthToken from "../utils/setAuthToken";
 
@@ -60,7 +63,7 @@ export const loadUser = () => async (dispatch) => {
 	}
 
 	try {
-		const res = await axios.get("http://localhost:2000/auth");
+		const res = await axios.get("http://localhost:5000/auth");
 
 		dispatch({
 			type: USER_LOADED,
@@ -87,7 +90,7 @@ export const register =
 
 		try {
 			const res = await axios.post(
-				"http://localhost:2000/register",
+				"http://localhost:5000/register",
 				body,
 				config
 			);
@@ -99,10 +102,12 @@ export const register =
 
 			dispatch(loadUser());
 		} catch (err) {
-
+			const errors = err.response.status;
 			
             console.log(err)
-            
+            if(errors===400){
+				alert("user already exists")
+			}
 
 			dispatch({
 				type: REGISTER_FAIL,
@@ -122,11 +127,11 @@ export const login = (email, password) => async (dispatch) => {
 
 	try {
 		const res = await axios.post(
-			"http://localhost:2000/login",
+			"http://localhost:5000/login",
 			body,
 			config
 		);
-
+		console.log(res)
 		dispatch({
 			type: LOGIN_SUCCESS,
 			payload: res.data,
@@ -134,15 +139,23 @@ export const login = (email, password) => async (dispatch) => {
 		
 		dispatch(loadUser());
 	} catch (err) {
-		const errors = err.response.data.errors;
+		const errors = err.response.status;
 
-		if (errors) {
-			// errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
-            console.log(errors)
-        }
-
+		// if (errors) {
+		// 	// errors.forEach((error) => dispatch(setAlert(error.msg, "danger")));
+        //     console.log(errors)
+        // }
+		console.log(errors)
+		if(errors===400){
+			alert("Password doesn't match")
+		}
+		else if(errors===401){
+			alert("user not found")
+		}
 		dispatch({
 			type: LOGIN_FAIL,
+
+			
 		});
 	}
 };
@@ -151,7 +164,7 @@ export const login = (email, password) => async (dispatch) => {
 export const friends=()=>async(dispatch)=>{
 	try{
 		const res = await axios.get(
-			"http://localhost:2000/friends",
+			"http://localhost:5000/friends",
 		);
 		dispatch({
 			type: FRIENDS_DETAILS,
@@ -178,7 +191,7 @@ export const logout = () => async(dispatch) => {
 export const Imageupload=(formdata)=>async(dispatch)=>{
 	try {
 		const res = await axios.post(
-			"http://localhost:2000/createpost",
+			"http://localhost:5000/createpost",
 			formdata,
 		);
 
@@ -195,7 +208,7 @@ export const Imageupload=(formdata)=>async(dispatch)=>{
 }
 export const Viewpostaction =()=>async(dispatch)=>{
 	try{
-		const res=await axios.get("http://localhost:2000/viewpost")
+		const res=await axios.get("http://localhost:5000/viewpost")
 		dispatch({
 			type:VIEW_POST,
 			payload:res.data
@@ -224,7 +237,7 @@ export const profile =
 
 		try {
 			const res = await axios.post(
-				"http://localhost:2000/editprofile2",
+				"http://localhost:5000/editprofile2",
 				body,
 				config
 			);
@@ -260,7 +273,7 @@ async (dispatch) => {
 
 	try {
 		const res = await axios.post(
-			"http://localhost:2000/editprofile2",
+			"http://localhost:5000/editprofile2",
 			formdata
 		);
 
@@ -284,7 +297,7 @@ async (dispatch) => {
 export const getAlluser =()=>async(dispatch)=>{
 		console.log("suriya")
 		try{
-			const res=await axios.get("http://localhost:2000/alluser")
+			const res=await axios.get("http://localhost:5000/alluser")
 			dispatch({
 				type:VIEW_ALL_USER,
 				payload:res.data
@@ -310,7 +323,7 @@ export const AddfriendByid =
 		console.log("suriya prakash")
 		try {
 			const res = await axios.get(
-				`http://localhost:2000/addfriend/${id}/${name}`,
+				`http://localhost:5000/addfriend/${id}/${name}`,
 			);
 
 			dispatch({
@@ -350,7 +363,7 @@ export function fetchProducts(id) {
 		console.log("suriya")
 		return dispatch => {
 		  dispatch(fetchProductsBegin());
-		  return axios.get("http://localhost:2000/alluser",
+		  return axios.get("http://localhost:5000/alluser",
 
 		  )
 			
@@ -393,7 +406,7 @@ export function fetchimages() {
 	console.log("suriya")
 	return dispatch => {
 	  dispatch(fetchimagesBegin());
-	  return axios.get("http://localhost:2000/allpost",
+	  return axios.get("http://localhost:5000/allpost",
 
 	  )
 		
@@ -435,7 +448,7 @@ export function fetchFriendsdetails() {
 	console.log("suriya")
 	return dispatch => {
 	  dispatch(fetchFriendsBegin());
-	  return axios.get("http://localhost:2000/viewfriends",
+	  return axios.get("http://localhost:5000/viewfriends",
 
 	  )
 		
@@ -467,7 +480,7 @@ export function fetchFriendsdetails() {
 	  console.log("suriya prakash")
 	  try {
 		  const res = await axios.delete(
-			  `http://localhost:2000/removefriend/${id}`,
+			  `http://localhost:5000/removefriend/${id}`,
 		  );
 
 		  dispatch({
@@ -520,7 +533,7 @@ export function fetchcomments(id) {
 	console.log(id)
 	return dispatch => {
 	  dispatch(fetchcommentsBegin());
-	  return axios.get(`http://localhost:2000/comments/${id}`,
+	  return axios.get(`http://localhost:5000/comments/${id}`,
 
 	  )
 		
@@ -546,7 +559,7 @@ export const AddComment=(formdata)=>async(dispatch)=>{
 	console.log(formdata)
 	try {
 		const res = await axios.post(
-			"http://localhost:2000/addcomment",
+			"http://localhost:5000/addcomment",
 			formdata,
 		);
 
@@ -576,7 +589,7 @@ async (dispatch) => {
 	console.log("suriya prakash")
 	try {
 		const res = await axios.delete(
-			`http://localhost:2000/deletepost/${id}`,
+			`http://localhost:5000/deletepost/${id}`,
 		);
 
 		dispatch({
@@ -609,7 +622,7 @@ async (dispatch) => {
 	console.log("suriya prakash")
 	try {
 		const res = await axios.delete(
-			`http://localhost:2000/deletecomment/${id}`,
+			`http://localhost:5000/deletecomment/${id}`,
 		);
 
 		dispatch({
@@ -641,7 +654,7 @@ async (dispatch) => {
 	console.log("suriya prakash")
 	try {
 		const res = await axios.put(
-			`http://localhost:2000/addlike/${id}`,
+			`http://localhost:5000/addlike/${id}`,
 		);
 
 		dispatch({
@@ -674,7 +687,7 @@ async (dispatch) => {
 	console.log("suriya prakash")
 	try {
 		const res = await axios.delete(
-			`http://localhost:2000/removelike/${id}`,
+			`http://localhost:5000/removelike/${id}`,
 		);
 
 		dispatch({
@@ -704,7 +717,7 @@ async (dispatch) => {
 	console.log("suriya prakash")
 	try {
 		const res = await axios.put(
-			`http://localhost:2000/editcomment`,
+			`http://localhost:5000/editcomment`,
 			formData
 		);
 
@@ -731,7 +744,7 @@ async (dispatch) => {
 export const SearchUsers =()=>async(dispatch)=>{
 	console.log("suriya")
 	try{
-		const res=await axios.get("http://localhost:2000/alluser")
+		const res=await axios.get("http://localhost:5000/alluser")
 		dispatch({
 			type:SEARCH_USER_SUCCESS,
 			payload:res.data
@@ -760,7 +773,7 @@ async (dispatch) => {
 	console.log("suriya prakash")
 	try {
 		const res = await axios.get(
-			`http://localhost:2000/search/${id}`,
+			`http://localhost:5000/search/${id}`,
 		);
 
 		dispatch({
@@ -792,7 +805,7 @@ async (dispatch) => {
 	console.log("suriya prakash")
 	try {
 		const res = await axios.post(
-			`http://localhost:2000/changepassword`,
+			`http://localhost:5000/changepassword`,
 			formData
 		);
 
@@ -811,6 +824,36 @@ async (dispatch) => {
 		dispatch({
 			type: PASSWORD_CHANGED_FAILURE,
 			payload:err
+		});
+	}
+};
+////
+////
+
+export const GetPost =
+( id) =>
+async (dispatch) => {
+	console.log(id,"kavin")
+	console.log("suriya prakash")
+	try {
+		const res = await axios.get(
+			`http://localhost:5000/getpost/${id}`,
+		);
+
+		dispatch({
+			type: GET_POST_SUCCESS,
+			payload: res.data,
+		});
+
+
+	} catch (err) {
+
+		
+		console.log(err)
+		
+
+		dispatch({
+			type: GET_POST_FAILURE,
 		});
 	}
 };

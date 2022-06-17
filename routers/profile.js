@@ -24,15 +24,16 @@ router.get('/addfriend/:friend_id/:name',auth,async(req,res)=>{
     //   })
     //   //throw new NotFoundError(`No post with id${req.body.id}`);
     // }console.log(posts.friends)
-    // let user = await friend.findOne({ fri });
-    // if ( posts.includes(friend_id)){
-    //   res.json({
-    //     message:"He's already you'r friend"
-    //   })
-    // }
+    let user = await friend.findOne({userId:req.user.id,friendId:friend_id, });
+    console.log(user,123455)
+    if ( user){
+      res.json({
+        message:"He's already you'r friend"
+      })
+    }
     // console.log(user_id)
     // console.log(friend_id)
-    // else{
+    else{
     const friend_data=await friend.create(
       
       {userId:req.user.id,
@@ -41,12 +42,13 @@ router.get('/addfriend/:friend_id/:name',auth,async(req,res)=>{
       
     )
     await friend_data.save()
+    console.log(friend_data)
     if(friend_data){      res.json({
       message:'friend added successfully ',
       // result:result
     })}
 
-    }
+    }}
   catch(err){
     console.log(err)
       res.json({
@@ -56,8 +58,13 @@ router.get('/addfriend/:friend_id/:name',auth,async(req,res)=>{
   })
   router.get("/search/:id",auth,async(req,res)=>{
     try{
+      console.log(req.params.id)
       const data=await user_details.findById(req.params.id)
-        if(data){
+      const following=await friend.find({userId:req.params.id})
+      const followers=await friend.find({friendId:req.params.id})
+      const post=await image.find({createdBy:req.params.id})
+      console.log(following)  
+      if(data){
             res.status(200).json({
               //data:data,
               name:data.name,
@@ -65,7 +72,10 @@ router.get('/addfriend/:friend_id/:name',auth,async(req,res)=>{
               gender:data.gender,
               phone:data.phone,
               friends:data.friends,
-              user:req.user
+              user:req.user,
+              followers:followers,
+              following:following,
+              post:post
             })
         }
         else{
@@ -78,9 +88,12 @@ router.get('/addfriend/:friend_id/:name',auth,async(req,res)=>{
           })
         }
   })
+
 router.get('/profile',auth,async(req,res)=>{
   try{
   const data=await user_details.findById(req.user.id)
+  const following=await friend.find({userId:req.user.id})
+  const followers=await friend.find({friendId:req.user.id})
     if(data){
         res.status(200).json({
           //data:data,
@@ -89,7 +102,9 @@ router.get('/profile',auth,async(req,res)=>{
           gender:data.gender,
           phone:data.phone,
           friends:data.friends,
-          user:req.user
+          user:req.user,
+          followers:followers,
+          following:following
         })
     }
     else{
@@ -127,7 +142,13 @@ router.delete('/removefriend/:id',auth,async(req,res)=>{
       res.status(200).json({
       message:'friend removed successfully ',
       result:friend_data
-    })}}
+    })}
+  else{
+    res.json({
+      message:"he's not ypur friend"
+    })
+  }}
+
     catch(err){
       console.log(err)
       res.json({
@@ -162,11 +183,15 @@ catch(err){
 router.get('/alluser',auth,async(req,res)=>{
   console.log("suriya")
   try{
-  const data=await friend.find({userId : {$ne : req.user.id}})
+  const data=await user_details.find({_id : {$ne : req.user.id}})
+  const following=await friend.find({userId:req.user.id})
+  const followers=await friend.find({friendId:req.user.id})
     if(data){
         res.status(200).json({
           //data:data,
-          data:data
+          data:data,
+          following:following,
+          followers:followers
         })
     }
     else{

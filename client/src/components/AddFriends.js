@@ -148,7 +148,7 @@ function UserContainer({user,userData,fetchProducts}){
                 <Divider variant={'middle'} className={styles.divider} />
                 {(userData.map((contact, id) => (
                   <>
-                    <PersonItem name={contact.friendName} id={contact._id}friendCount={6} src={'https://i.pravatar.cc/300?img=10'} />
+                    <PersonItem name={contact.name  } id={contact._id}friendCount={6} src={'https://i.pravatar.cc/300?img=10'} />
                     <Divider variant={'middle'} className={styles.divider} />
                     </>
                    )))}
